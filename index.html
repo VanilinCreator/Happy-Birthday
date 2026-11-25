@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#160d2b">
+<title>Happy Birthday! 🎂</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#fff;background:radial-gradient(ellipse at 50% 0%,#573080 0%,#24143e 42%,#100b20 100%);overflow-x:hidden}.stars{position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 20% 30%,#fff9 50%,transparent 100%),radial-gradient(1px 1px at 70% 20%,#fff9 50%,transparent 100%),radial-gradient(2px 2px at 85% 65%,#fff8 50%,transparent 100%),radial-gradient(1px 1px at 35% 80%,#fff8 50%,transparent 100%);background-size:260px 240px;animation:twinkle 5s ease-in-out infinite alternate}@keyframes twinkle{to{opacity:.35}}main{position:relative;z-index:1;min-height:100vh;display:grid;place-items:center;padding:32px 18px}.card{width:min(720px,100%);padding:clamp(28px,6vw,58px);text-align:center;border:1px solid #ffffff25;border-radius:30px;background:#ffffff0d;box-shadow:0 25px 90px #0006;backdrop-filter:blur(14px)}.eyebrow{letter-spacing:.22em;text-transform:uppercase;font-size:.76rem;color:#e3c7ff}.cake{font-size:clamp(76px,15vw,118px);filter:drop-shadow(0 12px 24px #ff9bca55);animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-12px) rotate(2deg)}}h1{font-size:clamp(2.6rem,9vw,5.3rem);line-height:1.02;margin:18px 0;background:linear-gradient(90deg,#ffe2a8,#ff9ed1,#c8a7ff);color:transparent;background-clip:text}.subtitle{font-size:clamp(1rem,3vw,1.2rem);line-height:1.7;color:#eee2fa;max-width:530px;margin:0 auto 28px}.name{display:inline-block;color:#ffd5a1;font-weight:800}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.btn{border:0;border-radius:999px;padding:14px 23px;font-size:1rem;font-weight:750;cursor:pointer;transition:transform .2s,filter .2s}.btn:hover{transform:translateY(-3px);filter:brightness(1.1)}.primary{background:linear-gradient(100deg,#ffb56b,#ff79b7);color:#32152e;box-shadow:0 8px 28px #ff79b744}.secondary{background:#ffffff16;color:white;border:1px solid #ffffff35}.message{display:none;margin:26px auto 0;padding:20px;border-radius:18px;background:#ffffff12;color:#ffe8f4;line-height:1.7;animation:appear .5s ease}.message.show{display:block}@keyframes appear{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}footer{margin-top:34px;color:#c8b6db;font-size:.82rem}.confetti{position:fixed;top:-20px;z-index:5;pointer-events:none;animation:fall linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.1}}.hint{font-size:.82rem;color:#cbb9dc;margin-top:18px}
+</style>
+</head>
+<body><div class="stars"></div>
+<main><section class="card">
+<div class="eyebrow">Сьогодні особливий день ✨</div>
+<div class="cake" aria-label="Святковий торт">🎂</div>
+<h1>Happy<br>Birthday!</h1>
+<p class="subtitle">Нехай кожен день буде сповнений радості, тепла, приємних сюрпризів і здійснених мрій. Бажаємо неймовірного року попереду! 💜</p>
+<div class="actions">
+<button class="btn primary" id="wish">🎁 Відкрити привітання</button>
+<button class="btn secondary" id="party">🎉 Більше свята!</button>
+</div>
+<div class="message" id="message">🥳 Бажаємо міцного здоров’я, вірних друзів, яскравих пригод і сміливості втілювати найзаповітніші мрії. Нехай поруч завжди будуть люди, які підтримують і надихають. Зі святом! 🎈</div>
+<div class="hint">Натисни на кнопки — нехай свято почнеться!</div>
+<footer>Зроблено з 💜 для особливого дня</footer>
+</section></main>
+<script>
+const message=document.getElementById('message');
+document.getElementById('wish').addEventListener('click',()=>{message.classList.toggle('show');confetti(45)});
+document.getElementById('party').addEventListener('click',()=>confetti(100));
+function confetti(count){const colors=['#ff9ecb','#ffd18b','#c6a4ff','#8de5dc','#fff'];for(let i=0;i<count;i++){const el=document.createElement('i');el.className='confetti';el.textContent=['✦','●','♥','✧'][Math.floor(Math.random()*4)];el.style.left=Math.random()*100+'vw';el.style.color=colors[Math.floor(Math.random()*colors.length)];el.style.fontSize=(10+Math.random()*16)+'px';el.style.animationDuration=(2.5+Math.random()*3)+'s';document.body.appendChild(el);setTimeout(()=>el.remove(),6000)}}
+</script></body></html>
