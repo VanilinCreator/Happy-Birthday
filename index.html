@@ -19,6 +19,8 @@
 .letter-note h2{margin:0 0 15px;font-size:clamp(1.5rem,5vw,2.1rem);color:#b54d88}
 .letter-note p{margin:0;font-size:clamp(1rem,3vw,1.15rem);font-weight:650}
 .letter-scene.reveal .letter-note{animation:noteReveal .8s cubic-bezier(.17,.89,.32,1.25) forwards}
+.letter-scene.closing .letter-note{transform-origin:center;animation:noteFlyAway .85s ease-in forwards;pointer-events:none}
+@keyframes noteFlyAway{0%{opacity:1;transform:translate(0,0) rotate(0) scale(1)}18%{transform:translate(-5px,-5px) rotate(-3deg) scale(1.01)}35%{transform:translate(7px,2px) rotate(4deg) scale(1)}52%{transform:translate(-8px,-2px) rotate(-5deg) scale(.98)}100%{opacity:0;transform:translate(115vw,-35vh) rotate(28deg) scale(.55)}}
 .letter-close{margin-top:22px;border:0;border-radius:999px;padding:10px 22px;background:linear-gradient(100deg,#ffb56b,#ff79b7);color:#32152e;font-weight:800;font-size:.95rem;cursor:pointer}
 @keyframes envelopeFly{0%{transform:translate(120vw,35vh) rotate(22deg)}75%{transform:translate(-4vw,-2vh) rotate(-5deg)}100%{transform:translate(0,0) rotate(0)}}
 @keyframes envelopeBurst{0%{transform:scale(1);opacity:1}35%{transform:scale(1.18) rotate(8deg)}100%{transform:scale(.15) rotate(-35deg);opacity:0;filter:blur(8px)}}
@@ -84,7 +86,12 @@ function openLetter(){
  letterTimer1=setTimeout(()=>letterScene.classList.add('burst'),1050);
  letterTimer2=setTimeout(()=>{letterScene.classList.add('reveal');confetti(65)},1550);
 }
-function closeLetter(){letterScene.className='letter-scene';}
+function closeLetter(){
+ if(!letterScene.classList.contains('active')) return;
+ letterScene.classList.remove('reveal');
+ letterScene.classList.add('closing');
+ setTimeout(()=>{letterScene.className='letter-scene';},850);
+}
 document.getElementById('wish').addEventListener('click',openLetter);
 document.getElementById('closeLetter').addEventListener('click',closeLetter);
 letterScene.addEventListener('click',e=>{if(e.target===letterScene)closeLetter();});
