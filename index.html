@@ -27,9 +27,32 @@
 @keyframes noteReveal{0%{opacity:0;transform:translateY(70px) scale(.45) rotate(-8deg)}75%{opacity:1;transform:translateY(-12px) scale(1.04) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
 @media(prefers-reduced-motion:reduce){.letter-scene.fly .envelope,.letter-scene.burst .envelope,.letter-scene.reveal .letter-note{animation-duration:.01ms}}footer{margin-top:34px;color:#c8b6db;font-size:.82rem}.confetti{position:fixed;top:-20px;z-index:5;pointer-events:none;animation:fall linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.1}}.hint{font-size:.82rem;color:#cbb9dc;margin-top:18px}
 .side-stars{position:fixed;inset:0;z-index:3;pointer-events:none}.star-link{position:absolute;display:grid;place-items:center;text-decoration:none;color:#ffe7ff;line-height:1;font-weight:900;-webkit-text-stroke:2px currentColor;paint-order:stroke fill;pointer-events:auto;filter:drop-shadow(0 0 10px #d7a5ffcc) drop-shadow(0 0 3px #fff);transition:transform .22s ease,filter .22s ease,color .22s ease;animation:starFloat 3.5s ease-in-out infinite alternate}.star-link:hover,.star-link:focus-visible{color:#ffd18b;filter:drop-shadow(0 0 18px #ff9ecb) drop-shadow(0 0 5px #fff);transform:scale(1.35) rotate(0deg)!important;outline:none}.star-link:focus-visible{outline:2px solid #fff;outline-offset:5px;border-radius:8px}@keyframes starFloat{to{translate:0 -9px}}@media(max-width:700px){main{padding:24px 12px}.card{width:calc(100% - 58px);padding:25px 14px}.star-link{opacity:.9}}
+
+/* Темний вступ зі свічками */
+body.intro-active{background:#030207;overflow:hidden}
+body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{visibility:hidden}
+.intro-scene{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 72%,#171020 0%,#050408 55%,#000 100%);transition:opacity 1.4s ease,visibility 1.4s ease}
+.intro-scene.done{opacity:0;visibility:hidden;pointer-events:none}
+.intro-content{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;padding:20px}
+.intro-title{font-size:clamp(1rem,3vw,1.25rem);color:#c8b9d7;letter-spacing:.08em}
+.intro-cake-wrap{position:relative;filter:drop-shadow(0 0 22px #ffb4dc22)}
+.intro-cake{font-size:clamp(125px,27vw,220px);line-height:1;user-select:none}
+.candle{position:absolute;top:4%;width:36px;height:70px;border:0;background:transparent;color:#ffe7a5;font-size:38px;cursor:pointer;filter:drop-shadow(0 0 7px #ffb24a55);padding:0;transition:filter .3s,transform .3s}
+.candle:hover{transform:scale(1.15)}
+.candle.c3{left:35%}.candle.c7{left:53%}
+.candle .flame{display:none;position:absolute;left:50%;top:-15px;transform:translateX(-50%);font-size:25px;animation:flameDance .45s ease-in-out infinite alternate;filter:drop-shadow(0 0 12px #ffb52e)}
+.candle.lit .flame{display:block}
+.candle.lit{color:#ffd77d}
+@keyframes flameDance{to{transform:translateX(-50%) rotate(8deg) scale(1.12)}}
+.lighter{border:1px solid #ffffff35;border-radius:18px;padding:12px 20px;background:#ffffff10;color:white;font-size:clamp(2rem,6vw,3rem);cursor:pointer;box-shadow:0 8px 30px #0008;transition:transform .2s,background .2s}
+.lighter:hover{transform:translateY(-3px);background:#ffffff20}
+.lighter.used{opacity:.4;filter:grayscale(1);cursor:default}
+.intro-hint{max-width:330px;min-height:24px;color:#b9a9c9;font-size:.92rem}
+@media(prefers-reduced-motion:reduce){.intro-scene{transition:none}.candle .flame{animation:none}}
+
 </style>
 </head>
-<body><div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
+<body class="intro-active"><div class="intro-scene" id="introScene"><div class="intro-content"><div class="intro-title">У кімнаті зовсім темно...</div><div class="intro-cake-wrap"><div class="intro-cake">🎂</div><button class="candle c3" id="candle3" aria-label="Запалити свічку 3">3<span class="flame">🔥</span></button><button class="candle c7" id="candle7" aria-label="Запалити свічку 7">7<span class="flame">🔥</span></button></div><button class="lighter" id="lighter" aria-label="Увімкнути запальничку">🔥</button><div class="intro-hint" id="introHint">Спочатку натисни на запальничку.</div></div></div><div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
 <main><section class="card">
 <div class="eyebrow">Сьогодні особливий день ✨</div>
 <div class="cake" aria-label="Святковий торт">🎂</div>
@@ -52,6 +75,61 @@
   </article>
 </div>
 <script>
+
+const introScene=document.getElementById('introScene');
+const introHint=document.getElementById('introHint');
+const lighter=document.getElementById('lighter');
+const candle3=document.getElementById('candle3');
+const candle7=document.getElementById('candle7');
+let lighterReady=false;
+let birthdayAudioContext=null;
+lighter.addEventListener('click',()=>{
+ if(lighterReady)return;
+ lighterReady=true;
+ lighter.classList.add('used');
+ introHint.textContent='Чудово! Тепер запали свічки 3 і 7.';
+});
+function lightCandle(candle){
+ if(!lighterReady){introHint.textContent='Спочатку візьми запальничку!';return;}
+ if(candle.classList.contains('lit'))return;
+ candle.classList.add('lit');
+ if(candle3.classList.contains('lit')&&candle7.classList.contains('lit')){
+   introHint.textContent='З днем народження! ✨';
+   playBirthdayTune();
+   setTimeout(()=>{
+     introScene.classList.add('done');
+     document.body.classList.remove('intro-active');
+     setTimeout(()=>introScene.remove(),1500);
+   },900);
+ }else{
+   introHint.textContent='Одна свічка горить! Запали другу.';
+ }
+}
+candle3.addEventListener('click',()=>lightCandle(candle3));
+candle7.addEventListener('click',()=>lightCandle(candle7));
+function playBirthdayTune(){
+ try{
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx)return;
+  birthdayAudioContext=new AudioCtx();
+  const notes=[392,392,440,392,523.25,493.88,392,392,440,392,587.33,523.25,392,392,783.99,659.25,523.25,493.88,440,698.46,698.46,659.25,523.25,587.33,523.25];
+  const beat=0.34;
+  let time=birthdayAudioContext.currentTime+0.08;
+  notes.forEach((frequency,index)=>{
+   const duration=(index===5||index===11||index===18||index===24)?beat*1.8:beat;
+   const osc=birthdayAudioContext.createOscillator();
+   const gain=birthdayAudioContext.createGain();
+   osc.type='sine';osc.frequency.value=frequency;
+   gain.gain.setValueAtTime(0.0001,time);
+   gain.gain.exponentialRampToValueAtTime(0.13,time+0.025);
+   gain.gain.exponentialRampToValueAtTime(0.0001,time+duration*0.88);
+   osc.connect(gain);gain.connect(birthdayAudioContext.destination);
+   osc.start(time);osc.stop(time+duration);
+   time+=duration+0.035;
+  });
+ }catch(error){console.warn('Не вдалося відтворити мелодію:',error);}
+}
+
 const birthdayLink='https://www.youtube.com/watch?v=RnIV0DnJ-jw';
 const starSpots=[
 [3,12,25,-18],[9,27,38,24],[3,44,31,42],[10,63,24,-35],[4,82,42,16],
