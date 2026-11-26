@@ -134,7 +134,9 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
 #gameHint{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(88%,420px);text-align:center;color:#fff;background:#100d20c9;border:1px solid #ffffff35;border-radius:14px;padding:10px 14px;font-size:.9rem}
 #aimDot{position:absolute;left:50%;top:50%;width:8px;height:8px;border:1.5px solid white;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 5px #000,0 0 10px #fff8}
 #handButton{position:absolute;right:24px;bottom:calc(34px + env(safe-area-inset-bottom));width:76px;height:76px;border-radius:50%;border:1px solid #ffffff75;background:#241936dd;color:#fff;font-size:30px;pointer-events:auto;box-shadow:0 5px 24px #0009;touch-action:none}
-#handButton small{display:block;font-size:10px;font-weight:800;letter-spacing:.08em}
+#handButton small,#flashlightButton small{display:block;font-size:10px;font-weight:800;letter-spacing:.08em}
+#flashlightButton{position:absolute;right:24px;top:24px;width:64px;height:64px;border-radius:50%;border:1px solid #ffffff75;background:#241936dd;color:#fff;font-size:25px;pointer-events:auto;z-index:6;box-shadow:0 5px 24px #0009;touch-action:manipulation}
+#flashlightButton.active{background:#a66a27;color:#fff4c7;box-shadow:0 0 24px #ffd36b99}
 #movePad{position:absolute;left:24px;bottom:calc(28px + env(safe-area-inset-bottom));width:124px;height:124px;border-radius:50%;border:1px solid #ffffff40;background:#ffffff13;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;z-index:5}#moveNub{pointer-events:none;touch-action:none;will-change:transform}
 #moveNub{position:absolute;width:52px;height:52px;left:35px;top:35px;border-radius:50%;background:#ffffff55;border:1px solid #ffffff88;box-shadow:0 3px 12px #0006}
 #lookHelp{position:absolute;right:18px;top:75px;color:#ffffffa8;font-size:11px;text-align:right}
@@ -166,6 +168,7 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
  <div id="gameHint">Підійди до холодильника та наведи точку на дверцята.</div>
  <div id="movePad"><div id="moveNub"></div></div>
  <button id="handButton" aria-label="Взяти або використати">✋<small>ДІЯ</small></button>
+ <button id="flashlightButton" type="button" aria-label="Увімкнути ліхтарик" aria-pressed="false">🔦<small>ЛІХТАРИК</small></button>
 </div>
 <div id="gameStart"><div id="gameStartCard"><h2>Час починати свято! 🎂</h2><p>Попереду маленька пригода. Підготуй торт, завар чай, запали свічки — і відкрий святкову сторінку.</p><p><b>Режим занурення:</b> гра розгорнеться на весь екран. На телефоні грай у горизонтальному або вертикальному положенні, як зручно.</p><p><b>Керування:</b> джойстик — рух, свайп — огляд, кнопка руки — взаємодія.</p><p id="gameError" role="alert"></p><button id="startGame" type="button" onclick="window.startBirthdayGame()">🎉 Почати свято</button></div></div>
 
@@ -186,7 +189,7 @@ window.addEventListener('birthday-game-start',()=>window.__birthdayStartGame?.()
 async function bootBirthdayGame(){
  const root=document.getElementById('gameRoot'),canvas=document.getElementById('gameCanvas');
  const taskEl=document.getElementById('gameTask'),hintEl=document.getElementById('gameHint'),heldEl=document.getElementById('heldItem');
- const hand=document.getElementById('handButton'),start=document.getElementById('startGame'),startScreen=document.getElementById('gameStart'),errorEl=document.getElementById('gameError');
+ const hand=document.getElementById('handButton'),flashlightButton=document.getElementById('flashlightButton'),start=document.getElementById('startGame'),startScreen=document.getElementById('gameStart'),errorEl=document.getElementById('gameError');
  let bootStage='підготовка';
  try{
   start.disabled=true;
@@ -205,6 +208,8 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0x100d1c);scene.f
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,80);camera.position.set(0,1.65,5);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 scene.add(new THREE.HemisphereLight(0xbacbff,0x453047,1.1));
+ const flashlight=new THREE.SpotLight(0xfff0cf,0,14,Math.PI/7,.45,1.2);flashlight.position.set(0,0,0);flashlight.target.position.set(0,0,-8);camera.add(flashlight);camera.add(flashlight.target);let flashlightOn=false;
+ function toggleFlashlight(){flashlightOn=!flashlightOn;flashlight.intensity=flashlightOn?32:0;flashlightButton.classList.toggle('active',flashlightOn);flashlightButton.setAttribute('aria-pressed',String(flashlightOn));flashlightButton.setAttribute('aria-label',flashlightOn?'Вимкнути ліхтарик':'Увімкнути ліхтарик')}
 const lamp=new THREE.PointLight(0xffc98b,0,12);lamp.position.set(0,3.1,0);scene.add(lamp);
 const warm=new THREE.PointLight(0xffb85c,0,5);warm.position.set(0,1.5,-2.5);scene.add(warm);
 const mat=(c,r=.8,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
@@ -243,43 +248,43 @@ cake.visible=false;
 const table=new THREE.Group();table.position.set(0,0,-1.6);scene.add(table);
 box('table top',0,.95,0,2.5,.16,1.5,wood2,table);
 for(const x of [-1,1])for(const z of [-.52,.52])box('table leg',x,.45,z,.14,.9,.14,wood,table);
-const mug=new THREE.Group();mug.position.set(4.8,1.98,-1.9);scene.add(mug);
+const mug=new THREE.Group();mug.position.set(4.8,.98,-1.9);mug.scale.setScalar(.8);scene.add(mug);
 cyl('mug cup',0,.18,0,.16,.19,.36,white,mug);
 const handleRing=new THREE.Mesh(new THREE.TorusGeometry(.12,.035,8,20),white);handleRing.position.set(.16,.2,0);mug.add(handleRing);
-const tea=new THREE.Group();tea.position.set(5.18,.82,-2.5);scene.add(tea);
+const tea=new THREE.Group();tea.position.set(5.18,.42,-2.5);scene.add(tea);
 box('tea sachet',0,0,0,.13,.18,.025,mat(0xe9d7a9),tea);box('tea label',0,.03,.02,.07,.05,.01,mat(0x9a425c),tea);tea.visible=false;
-const kettle=new THREE.Group();kettle.position.set(4.82,1.98,-2.65);scene.add(kettle);
+const kettle=new THREE.Group();kettle.position.set(4.82,.98,-2.65);kettle.scale.setScalar(.72);scene.add(kettle);
 cyl('kettle body',0,.55,0,.38,.4,.65,metal,kettle);cyl('kettle lid',0,.9,0,.28,.28,.08,dark,kettle);sphere('kettle knob',0,.99,0,.08,dark,kettle);
 const spout=cyl('kettle spout',.38,.73,-.02,.08,.12,.4,metal,kettle);spout.rotation.z=-.9;
 const kettleHandle=new THREE.Mesh(new THREE.TorusGeometry(.27,.045,8,20,Math.PI),dark);kettleHandle.position.set(-.28,.75,0);kettle.add(kettleHandle);
-const steamGroup=new THREE.Group();scene.add(steamGroup);steamGroup.position.set(4.82,2.98,-2.65);
+const steamGroup=new THREE.Group();scene.add(steamGroup);steamGroup.position.set(4.82,1.78,-2.65);
 for(let i=0;i<7;i++){const s=sphere('steam',Math.sin(i)*.12,i*.16,Math.cos(i)*.1,.045,mat(0xffffff));s.material.transparent=true;s.material.opacity=.0;steamGroup.add(s)}
 // Cabinet and sink
 const cabinet=new THREE.Group();cabinet.position.set(5.05,0,-2.5);cabinet.rotation.y=-Math.PI/2;scene.add(cabinet);
 // Нижня тумба з вільною передньою частиною та порожнім внутрішнім об'ємом.
-box('cabinet left side',-.75,.9,0,.1,1.8,.8,wood,cabinet);
-box('cabinet right side',.75,.9,0,.1,1.8,.8,wood,cabinet);
-box('cabinet back panel',0,.9,-.35,1.5,1.8,.1,wood,cabinet);
-box('cabinet bottom panel',0,.08,0,1.5,.12,.8,wood,cabinet);
-box('cabinet inner shelf',0,.72,-.02,1.42,.07,.68,wood2,cabinet);
-const cabDoor=new THREE.Group();cabDoor.position.set(-.8,1.1,.43);cabinet.add(cabDoor);
-box('cabinet door',.8,0,0,1.6,1.25,.07,wood2,cabDoor);
+box('cabinet left side',-.75,.45,0,.1,.9,.8,wood,cabinet);
+box('cabinet right side',.75,.45,0,.1,.9,.8,wood,cabinet);
+box('cabinet back panel',0,.45,-.35,1.5,.9,.1,wood,cabinet);
+box('cabinet bottom panel',0,.06,0,1.5,.12,.8,wood,cabinet);
+box('cabinet inner shelf',0,.36,-.02,1.42,.06,.68,wood2,cabinet);
+const cabDoor=new THREE.Group();cabDoor.position.set(-.8,.55,.43);cabinet.add(cabDoor);
+box('cabinet door',.8,0,0,1.6,.82,.07,wood2,cabDoor);
 box('cabinet knob',1.48,0,.06,.06,.1,.08,gold,cabDoor);
 // Стільниця розділена навколо вирізу раковини, а не перекриває її суцільною плитою.
-box('counter left section',-.69,1.9,0,.52,.16,1.05,cream,cabinet);
-box('counter right section',.69,1.9,0,.52,.16,1.05,cream,cabinet);
-box('counter front section',0,1.9,.43,.86,.16,.19,cream,cabinet);
-box('counter back section',0,1.9,-.43,.86,.16,.19,cream,cabinet);
+box('counter left section',-.69,.95,0,.52,.12,1.05,cream,cabinet);
+box('counter right section',.69,.95,0,.52,.12,1.05,cream,cabinet);
+box('counter front section',0,.95,.43,.86,.12,.19,cream,cabinet);
+box('counter back section',0,.95,-.43,.86,.12,.19,cream,cabinet);
 // Металевий матеріал оголошуємо до першого використання.
 const steel=mat(0x737d89,.28,.8);
 // Глибока раковина, темне дно та металевий кант.
-box('sink basin outer',0,1.82,0,.84,.12,.66,metal,cabinet);
-box('sink basin inner',0,1.79,0,.68,.055,.5,dark,cabinet);
-box('sink drain',0,1.758,0,.11,.012,.11,steel,cabinet);
-const tap=cyl('tap',0,2.14,-.43,.045,.045,.38,metal,cabinet);
-box('tap spout',0,2.32,-.23,.075,.07,.4,metal,cabinet);
-const tapHead=box('tap control',.18,2.13,-.43,.08,.16,.08,metal,cabinet);
-const tapWater=cyl('water stream',0,2.02,-.02,.025,.025,.28,mat(0x63cfff),cabinet);tapWater.material.transparent=true;tapWater.material.opacity=0;
+box('sink basin outer',0,.87,0,.84,.1,.66,metal,cabinet);
+box('sink basin inner',0,.83,0,.68,.045,.5,dark,cabinet);
+box('sink drain',0,.80,0,.11,.012,.11,steel,cabinet);
+const tap=cyl('tap',0,1.12,-.43,.045,.045,.28,metal,cabinet);
+box('tap spout',0,1.25,-.23,.075,.07,.32,metal,cabinet);
+const tapHead=box('tap control',.18,1.12,-.43,.08,.12,.08,metal,cabinet);
+const tapWater=cyl('water stream',0,1.02,-.02,.025,.025,.22,mat(0x63cfff),cabinet);tapWater.material.transparent=true;tapWater.material.opacity=0;
 const chair=new THREE.Group();chair.position.set(0,0,-.05);scene.add(chair);
 box('chair seat',0,.55,0,.85,.13,.8,wood2,chair);for(const x of [-.34,.34])for(const z of [-.3,.3])box('chair leg',x,.27,z,.09,.55,.09,wood,chair);box('chair back',0,1.1,-.34,.85,1,.12,wood2,chair);
 // decorative wall lamp
@@ -312,19 +317,19 @@ function addDrawerUnit(x,z,w=1.1){
 }
 // Фартух із плитки на стіні за робочою поверхнею
 // Декоративна плита з духовкою та витяжкою — окрема зона на задній стіні.
-for(let x=-.15;x<=2.35;x+=.42)for(let y=2.35;y<=3.15;y+=.34)box('stove backsplash tile',x,y,-5.82,.39,.31,.035,tile);
+for(let x=-.15;x<=2.35;x+=.42)for(let y=1.25;y<=1.85;y+=.30)box('stove backsplash tile',x,y,-5.82,.39,.27,.035,tile);
 addWallCabinet(-.35,3.25,-5.55,1.05);
 addWallCabinet(2.0,3.25,-5.55,1.05);
 addDrawerUnit(4.85,-4.45,.8);
-box('stove glass surface',1.0,2.01,-5.25,1.05,.045,.72,blackGlass);
+box('stove glass surface',1.0,.98,-5.25,1.05,.045,.72,blackGlass);
 for(const [x,z] of [[.67,-5.48],[1.32,-5.48],[.67,-5.02],[1.32,-5.02]]){
- cyl('burner ring',x,2.045,z,.15,.15,.025,steel);
- cyl('burner center',x,2.065,z,.07,.07,.018,dark);
+ cyl('burner ring',x,1.015,z,.15,.15,.025,steel);
+ cyl('burner center',x,1.035,z,.07,.07,.018,dark);
 }
-box('oven body',1.0,1.12,-4.78,.95,1.55,.12,dark);
-box('oven glass door',1.0,1.1,-4.705,.76,.82,.025,blackGlass);
-box('oven handle',1.0,1.55,-4.65,.62,.045,.06,steel);
-for(let i=0;i<3;i++)cyl('oven control',.7+i*.3,1.88,-4.68,.055,.055,.045,metal);
+box('oven body',1.0,.53,-4.78,.95,.86,.12,dark);
+box('oven glass door',1.0,.53,-4.705,.76,.48,.025,blackGlass);
+box('oven handle',1.0,.82,-4.65,.62,.045,.06,steel);
+for(let i=0;i<3;i++)cyl('oven control',.7+i*.3,1.03,-4.68,.055,.055,.045,metal);
 box('extractor chimney',1.0,3.48,-5.65,.42,.65,.35,steel);
 box('extractor hood',1.0,3.12,-5.42,1.35,.18,.7,steel);
 for(let i=0;i<4;i++)box('hood vent',.57+i*.28,3.015,-5.2,.12,.018,.28,dark);
@@ -365,7 +370,7 @@ for(const [x,z,rot] of [[-1.72,-1.6,Math.PI/2],[1.72,-1.6,-Math.PI/2]]){
 // Кошик, смітник і килимок біля мийки
 const bin=cyl('kitchen bin',5.35,.48,-4.35,.28,.34,.9,steel);
 cyl('bin lid',5.35,.96,-4.35,.3,.3,.08,dark);
-box('sink mat',4.05,.012,-2.5,1.1,.025,1.4,mat(0x51445d));
+box('sink mat',5.05,.012,-2.5,1.1,.025,1.4,mat(0x51445d));
 // Додаткові настінні полиці з посудом
 box('dish shelf',-1.2,2.8,-5.72,1.65,.08,.35,wood2);
 for(let i=0;i<3;i++){
@@ -400,7 +405,7 @@ function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)doc
 function carry(v){heldEl.textContent=v}
 function hint(t){hintEl.textContent=t;taskEl.textContent=t}
 let yaw=0,pitch=0,moveX=0,moveY=0,lastX=0,lastY=0,lookTouch=false;
-const clock=new THREE.Clock();const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+const clock=new THREE.Clock();const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact();if(e.key.toLowerCase()==='f')toggleFlashlight()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 function look(dx,dy){yaw-=dx*.004;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.003));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
 canvas.addEventListener('click',()=>{if(innerWidth>760&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas)look(e.movementX,e.movementY)});
@@ -432,6 +437,7 @@ window.addEventListener('pointerup',e=>{if(e.pointerId===padId)resetPad(e)});
 window.addEventListener('blur',()=>resetPad());
 document.addEventListener('visibilitychange',()=>{if(document.hidden)resetPad()});
 hand.addEventListener('click',interact);
+ flashlightButton.addEventListener('click',toggleFlashlight);
 const ray=new THREE.Raycaster();let currentTarget=null;
 function interact(){if(!currentTarget){hint('Наведи центральну точку на предмет ближче до себе.');return}currentTarget.userData.action?.()}
 function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
