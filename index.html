@@ -110,9 +110,23 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
 .lighter.used .lighter-spark{top:-45px}
 @media(max-width:420px){.lighter{width:84px;height:108px}.lighter-case{left:7px;right:7px}}
 
+
+/* Кекс 🧁 замість багатоярусного торта; свічки збережені, але зменшені */
+.intro-cake-wrap{width:min(86vw,280px);height:190px;display:grid;place-items:center;filter:drop-shadow(0 12px 20px #0009)}
+.cake-display{position:relative;width:260px;height:180px;display:grid;place-items:center}
+.intro-cake{font-size:clamp(128px,35vw,168px);line-height:1;filter:drop-shadow(0 7px 10px #0005);user-select:none}
+.candle{top:17px;width:24px;height:57px;border-radius:5px 5px 3px 3px;font-size:15px;padding:15px 0 0;background:repeating-linear-gradient(135deg,#fff1bd 0 6px,#e6a2c4 6px 11px);box-shadow:inset -3px 0 5px #8e4a7444,0 3px 6px #0007}
+.candle:after{top:-2px;height:6px}
+.candle.c3{left:40%}
+.candle.c7{left:52%}
+.candle .wick{top:-7px;height:8px;width:2px}
+.candle .flame{top:-32px;width:16px;height:25px;box-shadow:0 0 7px 3px #ffb13b99,0 0 18px 7px #ff8d3266}
+.candle .flame:after{left:5px;top:6px;width:6px;height:13px}
+@media(max-width:420px){.intro-cake-wrap{height:170px;width:min(90vw,260px)}.cake-display{transform:scale(.92);transform-origin:center}.intro-cake{font-size:145px}.candle{top:15px}}
+
 </style>
 </head>
-<body class="intro-active"><div class="intro-scene" id="introScene"><div class="intro-content"><div class="intro-title">У кімнаті зовсім темно...</div><div class="intro-cake-wrap"><div class="cake-display" aria-label="Святковий торт із двома свічками"><div class="cake-plate"></div><div class="cake-bottom"><span class="icing-drip"></span></div><div class="cake-top"></div><button class="candle c3" id="candle3" aria-label="Запалити свічку 3">3<span class="wick"></span><span class="flame">✦</span></button><button class="candle c7" id="candle7" aria-label="Запалити свічку 7">7<span class="wick"></span><span class="flame">✦</span></button></div></div><button class="lighter" id="lighter" aria-label="Увімкнути запальничку"><span class="lighter-spark">✦</span><span class="lighter-cap"></span><span class="lighter-hinge"></span><span class="lighter-striker"></span><span class="lighter-case"><span class="lighter-emblem">V</span></span><span class="lighter-label">ЗАПАЛЮВАЧ</span></button><div class="intro-hint" id="introHint">Спочатку натисни на запальничку.</div></div></div><div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
+<body class="intro-active"><div class="intro-scene" id="introScene"><div class="intro-content"><div class="intro-title">У кімнаті зовсім темно...</div><div class="intro-cake-wrap"><div class="cake-display" aria-label="Кекс із двома свічками"><div class="intro-cake">🧁</div><button class="candle c3" id="candle3" aria-label="Запалити свічку 3">3<span class="wick"></span><span class="flame">✦</span></button><button class="candle c7" id="candle7" aria-label="Запалити свічку 7">7<span class="wick"></span><span class="flame">✦</span></button></div></div><button class="lighter" id="lighter" aria-label="Увімкнути запальничку"><span class="lighter-spark">✦</span><span class="lighter-cap"></span><span class="lighter-hinge"></span><span class="lighter-striker"></span><span class="lighter-case"><span class="lighter-emblem">V</span></span><span class="lighter-label">ЗАПАЛЮВАЧ</span></button><div class="intro-hint" id="introHint">Спочатку натисни на запальничку.</div></div></div><div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
 <main><section class="card">
 <div class="eyebrow">Сьогодні особливий день ✨</div>
 <div class="cake" aria-label="Святковий торт">🎂</div>
