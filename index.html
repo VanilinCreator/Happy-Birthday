@@ -50,9 +50,48 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
 .intro-hint{max-width:330px;min-height:24px;color:#b9a9c9;font-size:.92rem}
 @media(prefers-reduced-motion:reduce){.intro-scene{transition:none}.candle .flame{animation:none}}
 
+
+/* Фінальне оформлення темного вступу */
+.intro-scene{isolation:isolate;background:radial-gradient(ellipse at 50% 72%,#100b17 0%,#050408 48%,#000 100%);overflow:hidden}
+.intro-scene:before{content:"";position:absolute;z-index:-1;inset:-20%;pointer-events:none;background:radial-gradient(circle at 50% 48%,#ffb85a00 0 10%,#ff9c4b00 28%,transparent 48%);opacity:0;transition:opacity 1.5s ease,background 1.5s ease}
+.intro-scene.lighter-on:before{opacity:.7;background:radial-gradient(circle at 50% 49%,#ffbd5a35 0 5%,#ff9c4b18 18%,transparent 42%)}
+.intro-scene.both-lit:before{opacity:1;background:radial-gradient(ellipse at 50% 48%,#ffcf8b88 0%,#ffb45b4a 24%,#a75c5b22 52%,transparent 75%)}
+.intro-content{position:relative;z-index:1;width:min(100%,520px);gap:13px}
+.intro-title{font-size:clamp(.85rem,3vw,1.12rem);letter-spacing:.16em;text-transform:uppercase;color:#c9b8d9;text-shadow:0 2px 14px #000}
+.intro-cake-wrap{width:min(88vw,360px);height:245px;display:grid;place-items:end center;filter:drop-shadow(0 14px 20px #0009)}
+.cake-display{position:relative;width:100%;height:225px}
+.cake-plate{position:absolute;left:5%;right:5%;bottom:8px;height:25px;border-radius:50%;background:linear-gradient(#f6dce9,#a77b9d 55%,#493047);box-shadow:0 8px 18px #0009}
+.cake-bottom{position:absolute;left:13%;right:13%;bottom:25px;height:100px;border-radius:18px 18px 25px 25px;background:linear-gradient(90deg,#6c2c62,#b95788 20%,#f2a6c8 50%,#b95788 82%,#57234f);box-shadow:inset 0 8px 0 #ffd9e9,inset 0 -12px 0 #6b2b62,0 9px 14px #0007}
+.cake-bottom:before{content:"";position:absolute;left:0;right:0;top:18px;height:8px;background:#ffe1ed;opacity:.9}
+.cake-bottom:after{content:"";position:absolute;left:9%;right:9%;bottom:19px;height:7px;border-radius:50%;background:#ffd4e5;opacity:.8}
+.cake-top{position:absolute;left:17%;right:17%;bottom:115px;height:48px;border-radius:50%;background:radial-gradient(ellipse at 50% 28%,#ffe9f3 0%,#ffc2dc 54%,#d77da9 100%);border:3px solid #f8c4dd;box-shadow:0 4px 0 #8c3f73}
+.candle{position:absolute;z-index:4;top:28px;width:35px;height:88px;border:0;border-radius:7px 7px 4px 4px;background:repeating-linear-gradient(135deg,#fff1bd 0 8px,#e6a2c4 8px 15px);color:#63345b;font-size:23px;font-weight:900;cursor:pointer;padding:23px 0 0;box-shadow:inset -5px 0 7px #8e4a7444,0 4px 9px #0007;transition:filter .25s,transform .25s}
+.candle:after{content:"";position:absolute;left:0;right:0;top:-3px;height:8px;border-radius:50%;background:#fff0c9}
+.candle.c3{left:36%}.candle.c7{left:54%}
+.candle:hover{transform:translateY(-4px);filter:brightness(1.25)}
+.candle .wick{position:absolute;left:50%;top:-9px;width:3px;height:10px;background:#30202a;transform:translateX(-50%)}
+.candle .flame{display:none;position:absolute;left:50%;top:-43px;transform:translateX(-50%);width:22px;height:34px;border-radius:55% 45% 55% 45%;font-size:0;background:radial-gradient(ellipse at 50% 68%,#fffbd0 0 17%,#ffe16b 34%,#ff9b31 67%,#ff5a24 100%);box-shadow:0 0 10px 5px #ffb13b99,0 0 30px 12px #ff8d3266;animation:realFlame .16s ease-in-out infinite alternate;transform-origin:50% 100%}
+.candle .flame:after{content:"";position:absolute;left:7px;top:8px;width:8px;height:18px;border-radius:50%;background:#fff7cb;filter:blur(1px)}
+.candle.lit .flame{display:block}
+.candle.lit{box-shadow:0 0 18px #ffb84d55,inset -5px 0 7px #8e4a7444}
+@keyframes realFlame{from{transform:translateX(-50%) rotate(-5deg) scale(.94);filter:brightness(.95)}to{transform:translateX(-50%) rotate(6deg) scale(1.08);filter:brightness(1.2)}}
+.lighter{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;min-width:150px;border:1px solid #ffffff40;border-radius:13px;padding:12px 18px;background:linear-gradient(145deg,#51515b,#17171e 55%,#08080c);color:#f8e6f2;font-size:1rem;cursor:pointer;box-shadow:0 8px 24px #000b,inset 0 1px 1px #ffffff55;transition:transform .2s,box-shadow .3s}
+.lighter:hover{transform:translateY(-3px);box-shadow:0 10px 30px #000b,0 0 18px #ffb34b44}
+.lighter-body{font-size:1.55rem;line-height:1;color:#d8d8e1;text-shadow:0 1px 2px #000}
+.lighter-spark{position:absolute;left:50%;top:-24px;color:#ffbd4e;font-size:0;opacity:0;transition:opacity .2s}
+.lighter.used .lighter-spark{font-size:27px;opacity:1;animation:sparkPulse .4s ease-in-out infinite alternate}
+.lighter.used{opacity:1;border-color:#ffbd6b99;box-shadow:0 0 22px #ffb84b44,inset 0 1px 1px #ffffff55}
+.lighter-label{font-size:.68rem;letter-spacing:.13em;font-weight:800}
+.intro-hint{max-width:340px;min-height:26px;color:#c8b8d5;text-shadow:0 1px 8px #000;font-size:.9rem}
+.intro-scene.both-lit .intro-title{color:#ffe5b8;text-shadow:0 0 18px #ffb45b99}
+.intro-scene.both-lit .intro-hint{color:#ffe5c7}
+@keyframes sparkPulse{to{transform:translateY(-5px) scale(1.15);filter:drop-shadow(0 0 9px #ffbd4e)}}
+@media(max-width:420px){.intro-content{gap:10px;padding:14px}.intro-cake-wrap{height:215px;width:min(90vw,320px)}.cake-display{transform:scale(.88);transform-origin:bottom center}.candle{top:33px}.intro-title{letter-spacing:.1em}.lighter{padding:10px 16px}}
+@media(prefers-reduced-motion:reduce){.candle .flame,.lighter.used .lighter-spark{animation:none}.intro-scene:before{transition:none}}
+
 </style>
 </head>
-<body class="intro-active"><div class="intro-scene" id="introScene"><div class="intro-content"><div class="intro-title">У кімнаті зовсім темно...</div><div class="intro-cake-wrap"><div class="intro-cake">🎂</div><button class="candle c3" id="candle3" aria-label="Запалити свічку 3">3<span class="flame">🔥</span></button><button class="candle c7" id="candle7" aria-label="Запалити свічку 7">7<span class="flame">🔥</span></button></div><button class="lighter" id="lighter" aria-label="Увімкнути запальничку">🔥</button><div class="intro-hint" id="introHint">Спочатку натисни на запальничку.</div></div></div><div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
+<body class="intro-active"><div class="intro-scene" id="introScene"><div class="intro-content"><div class="intro-title">У кімнаті зовсім темно...</div><div class="intro-cake-wrap"><div class="cake-display" aria-label="Святковий торт із двома свічками"><div class="cake-plate"></div><div class="cake-bottom"><span class="icing-drip"></span></div><div class="cake-top"></div><button class="candle c3" id="candle3" aria-label="Запалити свічку 3">3<span class="wick"></span><span class="flame">✦</span></button><button class="candle c7" id="candle7" aria-label="Запалити свічку 7">7<span class="wick"></span><span class="flame">✦</span></button></div></div><button class="lighter" id="lighter" aria-label="Увімкнути запальничку"><span class="lighter-spark">✦</span><span class="lighter-body">▰</span><span class="lighter-label">ЗАПАЛЮВАЧ</span></button><div class="intro-hint" id="introHint">Спочатку натисни на запальничку.</div></div></div><div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
 <main><section class="card">
 <div class="eyebrow">Сьогодні особливий день ✨</div>
 <div class="cake" aria-label="Святковий торт">🎂</div>
@@ -87,6 +126,7 @@ lighter.addEventListener('click',()=>{
  if(lighterReady)return;
  lighterReady=true;
  lighter.classList.add('used');
+ introScene.classList.add('lighter-on');
  introHint.textContent='Чудово! Тепер запали свічки 3 і 7.';
 });
 function lightCandle(candle){
@@ -95,6 +135,7 @@ function lightCandle(candle){
  candle.classList.add('lit');
  if(candle3.classList.contains('lit')&&candle7.classList.contains('lit')){
    introHint.textContent='З днем народження! ✨';
+   introScene.classList.add('both-lit');
    playBirthdayTune();
    setTimeout(()=>{
      introScene.classList.add('done');
