@@ -257,7 +257,7 @@ const rug=box('rug',0,.015,-1.8,4,.025,2.8,mat(0x76506e));rug.rotation.y=.05;
 box('window frame',-3.2,2.45,-5.86,2.1,1.55,.12,wood2);box('window glass',-3.2,2.45,-5.78,1.85,1.3,.04,glass);
 box('curtain left',-4.35,2.5,-5.65,.35,1.8,.18,pink);box('curtain right',-2.05,2.5,-5.65,.35,1.8,.18,pink);
 // Refrigerator at rear-left
-const fridge= new THREE.Group();fridge.position.set(-4.2,0,-3.6);scene.add(fridge);
+const fridge= new THREE.Group();fridge.position.set(-5.28,0,-3.55);fridge.rotation.y=Math.PI/2;scene.add(fridge);
 // Порожнистий корпус: задня стінка, боковини, дах і дно — без суцільного блока всередині.
 box('fridge left wall',-.57,1.25,0,.11,2.5,1.1,white,fridge);
 box('fridge right wall',.57,1.25,0,.11,2.5,1.1,white,fridge);
@@ -271,7 +271,7 @@ box('fridge handle',1.08,.05,.1,.055,.65,.08,metal,fridgeDoor);
 box('fridge inner shelf upper',0,1.55,-.02,1.02,.055,.78,white,fridge);
 box('fridge inner shelf lower',0,.82,-.02,1.02,.055,.78,white,fridge);
 const fridgeGlow=new THREE.PointLight(0x9de8ff,0,3);fridgeGlow.position.set(0,1.35,.18);fridge.add(fridgeGlow);
-const cake=new THREE.Group();cake.position.set(-4.2,.88,-3.6);scene.add(cake);
+const cake=new THREE.Group();cake.position.set(-4.38,.88,-3.55);scene.add(cake);
 cyl('cake base',0,.08,0,.38,.4,.16,mat(0xf3c8dc),cake);cyl('cake sponge',0,.27,0,.34,.34,.25,mat(0x9a4d70),cake);cyl('cake icing',0,.42,0,.35,.35,.08,mat(0xffddeb),cake);
 for(let i=0;i<5;i++){const berry=sphere('berry',Math.cos(i*1.25)*.2,.49,Math.sin(i*1.25)*.2,.055,mat(0xc93665),cake)}
 cake.visible=false;
@@ -279,19 +279,19 @@ cake.visible=false;
 const table=new THREE.Group();table.position.set(0,0,-1.6);scene.add(table);
 box('table top',0,.95,0,2.5,.16,1.5,wood2,table);
 for(const x of [-1,1])for(const z of [-.52,.52])box('table leg',x,.45,z,.14,.9,.14,wood,table);
-const mug=new THREE.Group();mug.position.set(4.25,1.98,-1.12);scene.add(mug);
+const mug=new THREE.Group();mug.position.set(4.8,1.98,-1.9);scene.add(mug);
 cyl('mug cup',0,.18,0,.16,.19,.36,white,mug);
 const handleRing=new THREE.Mesh(new THREE.TorusGeometry(.12,.035,8,20),white);handleRing.position.set(.16,.2,0);mug.add(handleRing);
-const tea=new THREE.Group();tea.position.set(3.9,.82,-1.02);scene.add(tea);
+const tea=new THREE.Group();tea.position.set(5.18,.82,-2.5);scene.add(tea);
 box('tea sachet',0,0,0,.13,.18,.025,mat(0xe9d7a9),tea);box('tea label',0,.03,.02,.07,.05,.01,mat(0x9a425c),tea);tea.visible=false;
-const kettle=new THREE.Group();kettle.position.set(3.35,1.75,-1.2);scene.add(kettle);
+const kettle=new THREE.Group();kettle.position.set(4.82,1.98,-2.65);scene.add(kettle);
 cyl('kettle body',0,.55,0,.38,.4,.65,metal,kettle);cyl('kettle lid',0,.9,0,.28,.28,.08,dark,kettle);sphere('kettle knob',0,.99,0,.08,dark,kettle);
 const spout=cyl('kettle spout',.38,.73,-.02,.08,.12,.4,metal,kettle);spout.rotation.z=-.9;
 const kettleHandle=new THREE.Mesh(new THREE.TorusGeometry(.27,.045,8,20,Math.PI),dark);kettleHandle.position.set(-.28,.75,0);kettle.add(kettleHandle);
-const steamGroup=new THREE.Group();scene.add(steamGroup);steamGroup.position.set(3.35,2.85,-1.2);
+const steamGroup=new THREE.Group();scene.add(steamGroup);steamGroup.position.set(4.82,2.98,-2.65);
 for(let i=0;i<7;i++){const s=sphere('steam',Math.sin(i)*.12,i*.16,Math.cos(i)*.1,.045,mat(0xffffff));s.material.transparent=true;s.material.opacity=.0;steamGroup.add(s)}
 // Cabinet and sink
-const cabinet=new THREE.Group();cabinet.position.set(3.9,0,-1.2);scene.add(cabinet);
+const cabinet=new THREE.Group();cabinet.position.set(5.05,0,-2.5);cabinet.rotation.y=-Math.PI/2;scene.add(cabinet);
 // Нижня тумба з вільною передньою частиною та порожнім внутрішнім об'ємом.
 box('cabinet left side',-.75,.9,0,.1,1.8,.8,wood,cabinet);
 box('cabinet right side',.75,.9,0,.1,1.8,.8,wood,cabinet);
@@ -301,11 +301,19 @@ box('cabinet inner shelf',0,.72,-.02,1.42,.07,.68,wood2,cabinet);
 const cabDoor=new THREE.Group();cabDoor.position.set(-.8,1.1,.43);cabinet.add(cabDoor);
 box('cabinet door',.8,0,0,1.6,1.25,.07,wood2,cabDoor);
 box('cabinet knob',1.48,0,.06,.06,.1,.08,gold,cabDoor);
-box('counter',0,1.9,0,1.9,.16,1.05,cream,cabinet);
-const sink=box('sink basin',-.3,1.99,.05,.72,.07,.56,metal,cabinet);
-const tap=cyl('tap',.55,2.16,-.1,.045,.045,.38,metal,cabinet);tap.rotation.x=.1;
-const tapHead=box('tap spout',.55,2.34,.05,.32,.07,.08,metal,cabinet);
-const tapWater=cyl('water stream',.55,2.08,.05,.025,.025,.28,mat(0x63cfff),cabinet);tapWater.material.transparent=true;tapWater.material.opacity=0;
+// Стільниця розділена навколо вирізу раковини, а не перекриває її суцільною плитою.
+box('counter left section',-.69,1.9,0,.52,.16,1.05,cream,cabinet);
+box('counter right section',.69,1.9,0,.52,.16,1.05,cream,cabinet);
+box('counter front section',0,1.9,.43,.86,.16,.19,cream,cabinet);
+box('counter back section',0,1.9,-.43,.86,.16,.19,cream,cabinet);
+// Глибока раковина, темне дно та металевий кант.
+box('sink basin outer',0,1.82,0,.84,.12,.66,metal,cabinet);
+box('sink basin inner',0,1.79,0,.68,.055,.5,dark,cabinet);
+box('sink drain',0,1.758,0,.11,.012,.11,steel,cabinet);
+const tap=cyl('tap',0,2.14,-.43,.045,.045,.38,metal,cabinet);
+box('tap spout',0,2.32,-.23,.075,.07,.4,metal,cabinet);
+const tapHead=box('tap control',.18,2.13,-.43,.08,.16,.08,metal,cabinet);
+const tapWater=cyl('water stream',0,2.02,-.02,.025,.025,.28,mat(0x63cfff),cabinet);tapWater.material.transparent=true;tapWater.material.opacity=0;
 const chair=new THREE.Group();chair.position.set(0,0,-.05);scene.add(chair);
 box('chair seat',0,.55,0,.85,.13,.8,wood2,chair);for(const x of [-.34,.34])for(const z of [-.3,.3])box('chair leg',x,.27,z,.09,.55,.09,wood,chair);box('chair back',0,1.1,-.34,.85,1,.12,wood2,chair);
 // decorative wall lamp
@@ -337,40 +345,34 @@ function addDrawerUnit(x,z,w=1.1){
  return g;
 }
 // Фартух із плитки на стіні за робочою поверхнею
-for(let x=2.75;x<=5.05;x+=.42)for(let y=2.35;y<=3.15;y+=.34){
- const t=box('backsplash tile',x,y,-1.78,.39,.31,.035,tile);t.material=tile;
-}
-// Верхні кухонні шафи над стільницею
-addWallCabinet(3.25,3.25,-1.55,1.05);
-addWallCabinet(4.48,3.25,-1.55,1.05);
-// Додаткова секція нижніх шухляд біля робочої зони
-addDrawerUnit(5.15,-1.2,.7);
-// Варильна поверхня на стільниці
-box('stove glass surface',3.85,2.01,-1.17,1.05,.045,.72,blackGlass);
-for(const [x,z] of [[3.52,-1.4],[4.17,-1.4],[3.52,-.94],[4.17,-.94]]){
+// Декоративна плита з духовкою та витяжкою — окрема зона на задній стіні.
+for(let x=-.15;x<=2.35;x+=.42)for(let y=2.35;y<=3.15;y+=.34)box('stove backsplash tile',x,y,-5.82,.39,.31,.035,tile);
+addWallCabinet(-.35,3.25,-5.55,1.05);
+addWallCabinet(2.0,3.25,-5.55,1.05);
+addDrawerUnit(4.85,-4.45,.8);
+box('stove glass surface',1.0,2.01,-5.25,1.05,.045,.72,blackGlass);
+for(const [x,z] of [[.67,-5.48],[1.32,-5.48],[.67,-5.02],[1.32,-5.02]]){
  cyl('burner ring',x,2.045,z,.15,.15,.025,steel);
  cyl('burner center',x,2.065,z,.07,.07,.018,dark);
 }
-// Духовка під плитою
-box('oven body',3.85,.78,-.72,.95,.72,.12,dark);
-box('oven glass door',3.85,.76,-.645,.76,.42,.025,blackGlass);
-box('oven handle',3.85,1.04,-.59,.62,.045,.06,steel);
-for(let i=0;i<3;i++)cyl('oven control',3.55+i*.3,1.22,-.62,.055,.055,.045,metal);
-// Витяжка та повітропровід
-box('extractor chimney',3.85,3.48,-1.65,.42,.65,.35,steel);
-box('extractor hood',3.85,3.12,-1.42,1.35,.18,.7,steel);
-for(let i=0;i<4;i++)box('hood vent',3.42+i*.28,3.015,-1.2,.12,.018,.28,dark);
+box('oven body',1.0,.78,-4.78,.95,.72,.12,dark);
+box('oven glass door',1.0,.76,-4.705,.76,.42,.025,blackGlass);
+box('oven handle',1.0,1.04,-4.65,.62,.045,.06,steel);
+for(let i=0;i<3;i++)cyl('oven control',.7+i*.3,1.22,-4.68,.055,.055,.045,metal);
+box('extractor chimney',1.0,3.48,-5.65,.42,.65,.35,steel);
+box('extractor hood',1.0,3.12,-5.42,1.35,.18,.7,steel);
+for(let i=0;i<4;i++)box('hood vent',.57+i*.28,3.015,-5.2,.12,.018,.28,dark);
 // Полички зі спеціями
-box('spice shelf',1.75,2.65,-5.72,2.2,.09,.32,wood2);
+box('spice shelf',3.85,2.65,-5.72,2.2,.09,.32,wood2);
 for(let i=0;i<5;i++){
- const jar=cyl('spice jar',.95+i*.38,2.88,-5.62,.075,.075,.34,[pink,gold,cream,woodLight,steel][i]);
- cyl('spice lid',.95+i*.38,3.06,-5.62,.08,.08,.045,metal);
+ const jar=cyl('spice jar',3.05+i*.38,2.88,-5.62,.075,.075,.34,[pink,gold,cream,woodLight,steel][i]);
+ cyl('spice lid',3.05+i*.38,3.06,-5.62,.08,.08,.045,metal);
 }
 // Холодильник: магніти та верхня полиця
-box('fridge top trim',-4.2,2.56,-3.6,1.32,.09,1.13,metal);
+box('fridge top trim',-5.28,2.56,-3.55,1.32,.09,1.13,metal);
 for(let i=0;i<3;i++){
- const magnet=sphere('fridge magnet',-4.55+i*.28,1.8,.0,.07,[pink,gold,woodLight][i],fridge);
- magnet.position.z=.59;
+ const magnet=sphere('fridge magnet',0,1.8,.0,.07,[pink,gold,woodLight][i],fridge);
+ magnet.position.set(.59,1.8,-.35+i*.28);
 }
 // Стільниця-підвіконня, квітка та горщик
 box('window sill',-3.2,1.62,-5.65,2.35,.12,.42,wood2);
@@ -395,9 +397,9 @@ for(const [x,z,rot] of [[-1.72,-1.6,Math.PI/2],[1.72,-1.6,-Math.PI/2]]){
  box('dining chair back',0,1.02,-.3,.72,.86,.1,wood2,cg);
 }
 // Кошик, смітник і килимок біля мийки
-const bin=cyl('kitchen bin',5.15,.48,-3.4,.28,.34,.9,steel);
-cyl('bin lid',5.15,.96,-3.4,.3,.3,.08,dark);
-box('sink mat',3.9,.012,-2.35,1.8,.025,1.1,mat(0x51445d));
+const bin=cyl('kitchen bin',5.35,.48,-4.35,.28,.34,.9,steel);
+cyl('bin lid',5.35,.96,-4.35,.3,.3,.08,dark);
+box('sink mat',4.05,.012,-2.5,1.1,.025,1.4,mat(0x51445d));
 // Додаткові настінні полиці з посудом
 box('dish shelf',-1.2,2.8,-5.72,1.65,.08,.35,wood2);
 for(let i=0;i<3;i++){
