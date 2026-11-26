@@ -271,7 +271,7 @@ box('fridge handle',1.08,.05,.1,.055,.65,.08,metal,fridgeDoor);
 box('fridge inner shelf upper',0,1.55,-.02,1.02,.055,.78,white,fridge);
 box('fridge inner shelf lower',0,.82,-.02,1.02,.055,.78,white,fridge);
 const fridgeGlow=new THREE.PointLight(0x9de8ff,0,3);fridgeGlow.position.set(0,1.35,.18);fridge.add(fridgeGlow);
-const cake=new THREE.Group();cake.position.set(-4.38,.88,-3.55);scene.add(cake);
+const cake=new THREE.Group();cake.position.set(-4.92,.88,-3.55);scene.add(cake);
 cyl('cake base',0,.08,0,.38,.4,.16,mat(0xf3c8dc),cake);cyl('cake sponge',0,.27,0,.34,.34,.25,mat(0x9a4d70),cake);cyl('cake icing',0,.42,0,.35,.35,.08,mat(0xffddeb),cake);
 for(let i=0;i<5;i++){const berry=sphere('berry',Math.cos(i*1.25)*.2,.49,Math.sin(i*1.25)*.2,.055,mat(0xc93665),cake)}
 cake.visible=false;
@@ -355,10 +355,10 @@ for(const [x,z] of [[.67,-5.48],[1.32,-5.48],[.67,-5.02],[1.32,-5.02]]){
  cyl('burner ring',x,2.045,z,.15,.15,.025,steel);
  cyl('burner center',x,2.065,z,.07,.07,.018,dark);
 }
-box('oven body',1.0,.78,-4.78,.95,.72,.12,dark);
-box('oven glass door',1.0,.76,-4.705,.76,.42,.025,blackGlass);
-box('oven handle',1.0,1.04,-4.65,.62,.045,.06,steel);
-for(let i=0;i<3;i++)cyl('oven control',.7+i*.3,1.22,-4.68,.055,.055,.045,metal);
+box('oven body',1.0,1.12,-4.78,.95,1.55,.12,dark);
+box('oven glass door',1.0,1.1,-4.705,.76,.82,.025,blackGlass);
+box('oven handle',1.0,1.55,-4.65,.62,.045,.06,steel);
+for(let i=0;i<3;i++)cyl('oven control',.7+i*.3,1.88,-4.68,.055,.055,.045,metal);
 box('extractor chimney',1.0,3.48,-5.65,.42,.65,.35,steel);
 box('extractor hood',1.0,3.12,-5.42,1.35,.18,.7,steel);
 for(let i=0;i<4;i++)box('hood vent',.57+i*.28,3.015,-5.2,.12,.018,.28,dark);
@@ -413,7 +413,7 @@ box('right wall baseboard',5.86,.12,0,.08,.18,11.7,wood2);
 
 // Small snow particles in fridge area
 const snow=[];
-for(let i=0;i<24;i++){const p=sphere('snow',-4.55+Math.random()*.9,.55+Math.random()*1.5,-3.85+Math.random()*.4,.018,mat(0xcdf5ff));p.visible=false;snow.push(p)}
+for(let i=0;i<24;i++){const p=sphere('snow',-5.55+Math.random()*.7,.55+Math.random()*1.5,-4.0+Math.random()*.8,.018,mat(0xcdf5ff));p.visible=false;snow.push(p)}
 // object interaction anchors
 const targets=[];
 function target(name,obj,action){obj.userData.interact=name;obj.userData.action=action;targets.push(obj);return obj}
