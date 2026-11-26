@@ -173,7 +173,7 @@ window.startBirthdayGame=function(){window.dispatchEvent(new Event('birthday-gam
 </script>
 <script type="module">
 
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
+// Three.js завантажується лише після натискання кнопки.
 window.__birthdayGameReady=function(){};
 let birthdayGameBoot=null;
 window.__birthdayStartGame=()=>{
@@ -188,7 +188,8 @@ async function bootBirthdayGame(){
  const hand=document.getElementById('handButton'),start=document.getElementById('startGame'),startScreen=document.getElementById('gameStart');
  try{
   start.disabled=true;
-  start.textContent='Завантажуємо гру…';
+  start.textContent='Завантажуємо 3D-движок…';
+  const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js');
   if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'}).catch(()=>{});
   root.classList.add('playing');
   startScreen.style.display='none';
