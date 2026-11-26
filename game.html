@@ -580,7 +580,7 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
  const strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
  const dir=new THREE.Vector3(strafe,0,-forward);
  const delta=Math.min(clock.getDelta(),.05);
- if(dir.lengthSq()>0.0025){
+ if(!sequenceBusy&&dir.lengthSq()>0.0025){
   dir.clampLength(0,1).applyAxisAngle(new THREE.Vector3(0,1,0),yaw);
   const step=dir.clone().clampLength(0,1).multiplyScalar(delta*3.4);
   // Колізії з основними меблями.
@@ -617,7 +617,7 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
   if(!blocked(nx,camera.position.z))camera.position.x=nx;
   if(!blocked(camera.position.x,nz))camera.position.z=nz;
  }
- camera.position.x=Math.max(-5.55,Math.min(5.55,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(10.35,camera.position.z));camera.position.y=1.65;
+ camera.position.x=Math.max(-5.55,Math.min(5.55,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(10.35,camera.position.z));if(!sequenceBusy)camera.position.y=1.65;
 ray.setFromCamera(new THREE.Vector2(0,0),camera);const hits=ray.intersectObjects(targets,true);currentTarget=null;for(const h of hits){let o=h.object;while(o&&!o.userData.action)o=o.parent;if(o&&o.userData.action&&h.distance<3.2){currentTarget=o;break}}
 hand.style.opacity=currentTarget?'1':'.65';
 if(currentTarget)hand.querySelector('small').textContent='ДІЯ';else hand.querySelector('small').textContent='ОБРАТИ';
