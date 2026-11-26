@@ -270,6 +270,8 @@ box('counter left section',-.69,1.9,0,.52,.16,1.05,cream,cabinet);
 box('counter right section',.69,1.9,0,.52,.16,1.05,cream,cabinet);
 box('counter front section',0,1.9,.43,.86,.16,.19,cream,cabinet);
 box('counter back section',0,1.9,-.43,.86,.16,.19,cream,cabinet);
+// Металевий матеріал оголошуємо до першого використання.
+const steel=mat(0x737d89,.28,.8);
 // Глибока раковина, темне дно та металевий кант.
 box('sink basin outer',0,1.82,0,.84,.12,.66,metal,cabinet);
 box('sink basin inner',0,1.79,0,.68,.055,.5,dark,cabinet);
@@ -288,7 +290,7 @@ candleA.visible=false;candleB.visible=false;
 const flames=[];
 for(const c of [candleA,candleB]){const fl=sphere('flame',c.position.x,1.62,c.position.z,.07,mat(0xffb53d));fl.visible=false;flames.push(fl)}
 // Повноцінніше облаштування кухні: шафи, плита, витяжка, декор і зони зберігання
-const cabinetCream=mat(0xb9a6a0),tile=mat(0x81778c),steel=mat(0x737d89,.28,.8),blackGlass=mat(0x171923,.18,.35),woodLight=mat(0xb98259);
+const cabinetCream=mat(0xb9a6a0),tile=mat(0x81778c),blackGlass=mat(0x171923,.18,.35),woodLight=mat(0xb98259);
 function addWallCabinet(x,y,z,w=1.25){
  const g=new THREE.Group();g.position.set(x,y,z);scene.add(g);
  box('upper cabinet',0,0,0,w,.92,.48,cabinetCream,g);
