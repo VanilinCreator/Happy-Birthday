@@ -486,7 +486,7 @@ target('Душ',showerTray,()=>{if(!state.ate){hint('Спочатку закін
 target('Туалет',toilet.children[1],()=>{if(!state.showered){hint('Спочатку прийми душ.');return}if(state.usedToilet){hint('Це вже зроблено. Тепер іди спати.');return}state.usedToilet=true;objective('🛏️ Іди до ліжка у спальні та лягай спати.');hint('Усе готово! Тепер можеш іти спати.');});
 target('Ліжко',bed.children[0],()=>{if(!state.usedToilet){hint('Спочатку сходи в душ, а потім у туалет.');return}state.slept=true;objective('🌙 На добраніч! День завершено.');hint('Ти ліг спати. День завершено!');setTimeout(finishGame,1800)});
 const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,mugPlaced:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false,ate:false,showered:false,usedToilet:false,slept:false};
-function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візьми запальничку.');return}if(!state.cakePlaced){hint('Потрібен торт на столі.');return}const fl=flames[i];if(fl.visible)return;fl.visible=true;state.litCount++;lamp.intensity=state.litCount===1?1.2:2.8;warm.intensity=state.litCount===1?1.5:3.5;hint(state.litCount===1?'Перша свічка горить. Запали другу!':'Обидві свічки горять! Сідай на стілець.');if(state.litCount===2){scene.background=new THREE.Color(0x24172b);scene.fog.color.set(0x24172b)}}
+function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візьми запальничку.');return}if(!state.cakePlaced){hint('Потрібен торт на столі.');return}const fl=flames[i];if(fl.visible)return;fl.visible=true;state.litCount++;lamp.intensity=state.litCount===1?1.2:2.8;warm.intensity=state.litCount===1?1.5:3.5;hint(state.litCount===1?'Перша свічка горить. Запали другу!':'Обидві свічки горять! Сідай на стілець.');if(state.litCount===2){objective('🍽️ Сідай на будь-який із трьох стільців і заверши сніданок.');scene.background=new THREE.Color(0x24172b);scene.fog.color.set(0x24172b)}}
 function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});window.location.href='site.html';}
 function carry(v){heldEl.textContent=v}
 function hint(t){hintEl.textContent=t}
@@ -578,7 +578,7 @@ addEventListener('resize',resize);
 
   gameStarted=true;
   animate();
-  objective('🍳 Прямуй на кухню та приготуй святковий сніданок.');hintEl.textContent='Ти прокинувся біля ліжка. Спочатку йди на кухню.';
+  objective('🎂 Іди на кухню, дістань торт із холодильника та постав його на стіл.');hintEl.textContent='Ти прокинувся біля ліжка. Спочатку йди на кухню.';
  }catch(err){
   console.error('Помилка запуску Happy Birthday:',err);
   root.classList.remove('playing');
