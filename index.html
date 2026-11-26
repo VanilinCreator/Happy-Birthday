@@ -143,6 +143,10 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
 #gameStart h2{font-size:clamp(1.6rem,6vw,2.4rem);margin:0 0 12px;color:#ffd9aa}
 #gameStart p{line-height:1.6;color:#e8dff1}
 #startGame{border:0;border-radius:999px;padding:14px 25px;font-weight:800;font-size:1rem;background:linear-gradient(100deg,#ffb56b,#ff79b7);color:#32152e}
+#gameRoot:not(.playing) #gameCanvas{visibility:hidden}
+#gameRoot:not(.playing) #gameHud>*:not(#gameStart){visibility:hidden}
+#gameRoot.playing #gameCanvas{visibility:visible}
+#gameRoot.playing #gameHud>*:not(#gameStart){visibility:visible}
 #gameRoot.hidden{display:none}
 @media(min-width:800px){#movePad{width:110px;height:110px}#moveNub{left:30px;top:30px}#lookHelp:after{content:"WASD — рух • миша — огляд • E — дія";font-size:12px}}
 @media(max-width:500px){#gameTask{top:10px;font-size:13px;padding:10px 12px}#gameHint{bottom:calc(18px + env(safe-area-inset-bottom));font-size:12px}#handButton{right:18px;width:68px;height:68px}#movePad{left:16px;width:112px;height:112px}#moveNub{left:30px;top:30px}}
@@ -268,6 +272,7 @@ window.__birthdayStartGame=async()=>{
  try{
   if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'});
  }catch(e){}
+ root.classList.add('playing');
  startScreen.style.display='none';
  hintEl.textContent='Запускаємо пригоду…';
  if(typeof animate==='function'){
@@ -276,6 +281,7 @@ window.__birthdayStartGame=async()=>{
    animate();
    hintEl.textContent='Підійди до холодильника. Наведи точку на дверцята й натисни ✋.';
   }catch(err){
+   root.classList.remove('playing');
    startScreen.style.display='grid';
    start.disabled=false;
    start.textContent='Спробувати ще раз';
