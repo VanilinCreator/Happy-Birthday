@@ -218,14 +218,21 @@ function box(name,x,y,z,sx,sy,sz,material,group=scene){const o=new THREE.Mesh(ne
 function sphere(name,x,y,z,r,material,group=scene){const o=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),material);o.name=name;o.position.set(x,y,z);o.castShadow=true;group.add(o);return o}
 function cyl(name,x,y,z,rt,rb,h,material,group=scene){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,20),material);o.name=name;o.position.set(x,y,z);o.castShadow=true;group.add(o);return o}
 const floor=box('floor',0,-.12,0,12,.2,12,mat(0x392b3e));floor.receiveShadow=true;
-// Розширена частина будинку: коридор, ванна кімната та спальня.
+// План будинку: кухня спереду, за нею широкий коридор і три окремі кімнати.
 box('extended floor',0,-.125,7,12,.19,8,mat(0x392b3e));
-box('left extension wall',-5.9,2,8, .2,4,8,wall);box('right extension wall',5.9,2,8,.2,4,8,wall);
+box('left extension wall',-5.9,2,8,.2,4,8,wall);
+box('right extension wall',5.9,2,8,.2,4,8,wall);
 box('far extension wall',0,2,10.9,12,4,.2,wall);
-box('bathroom back wall',-3.0,2,8.65,5.8,4,.16,wall);
-box('bedroom back wall',3.0,2,8.65,5.8,4,.16,wall);
-box('room divider',0,2,6.2,.16,4,4.8,wall);
-box('back wall',0,2,-6,12,4,.2,wall);box('left wall',-6,2,0,.2,4,12,wall);box('right wall',6,2,0,.2,4,12,wall);
+// Поперечна стіна відділяє коридор. Три широкі дверні прорізи ведуть у кімнати.
+for(const [a,b] of [[-6,-5.15],[-3.85,-2.15],[-.85,1.9],[4.1,6]])box('corridor room wall',(a+b)/2,2,3.15,b-a,4,.18,wall);
+// Перегородки формують ванну, туалет і спальню; дверні прорізи залишені з боку коридору.
+for(const [x,name] of [[-3,'bathroom partition'],[0,'bedroom partition']]){
+ box(name+' front',(x),2,3.75,.18,4,1.2,wall);
+ box(name+' rear',(x),2,8.1,.18,4,5.6,wall);
+}
+box('back wall',0,2,-6,12,4,.2,wall);
+box('left wall',-6,2,0,.2,4,12,wall);
+box('right wall',6,2,0,.2,4,12,wall);
 for(let i=0;i<6;i++)box('floor plank',0,.001,-5+i*2,11.8,.012,.025,wood2);
 const ceiling=box('ceiling',0,4,0,12,.12,12,mat(0x211c2b));
 const rug=box('rug',0,.015,-1.8,4,.025,2.8,mat(0x76506e));rug.rotation.y=.05;
@@ -414,20 +421,28 @@ box('back wall baseboard',0,.12,-5.86,11.7,.18,.08,wood2);
 box('left wall baseboard',-5.86,.12,0,.08,.18,11.7,wood2);
 box('right wall baseboard',5.86,.12,0,.08,.18,11.7,wood2);
 
-// Окреме освітлення кімнат: кожне світло керується власним настінним вимикачем.
+// П'ять окремих світильників: видимий плафон + реальне світло, кожен має свій вимикач.
 const roomLights={
- kitchen:new THREE.PointLight(0xffe5c1,1.65,10),
- bathroom:new THREE.PointLight(0xd8edff,1.55,7),
- toilet:new THREE.PointLight(0xffedda,1.45,6),
- corridor:new THREE.PointLight(0xffdfb0,1.35,8),
- bedroom:new THREE.PointLight(0xffd9a8,1.6,8)
+ kitchen:new THREE.PointLight(0xffe5c1,3.2,13),
+ bathroom:new THREE.PointLight(0xd8edff,3.0,9),
+ toilet:new THREE.PointLight(0xffedda,2.8,8),
+ corridor:new THREE.PointLight(0xffdfb0,2.7,11),
+ bedroom:new THREE.PointLight(0xffd9a8,3.0,11)
 };
-roomLights.kitchen.position.set(0,3.45,-1.3);
-roomLights.bathroom.position.set(-4.15,3.15,5.3);
-roomLights.toilet.position.set(-1.75,3.05,5.3);
-roomLights.corridor.position.set(.85,3.25,8.3);
-roomLights.bedroom.position.set(3.0,3.2,5.3);
-Object.values(roomLights).forEach(light=>scene.add(light));
+const lampBulbs={};
+function addCeilingLamp(id,x,z,color,light){
+ light.position.set(x,3.35,z);scene.add(light);
+ const mount=cyl(id+' ceiling mount',x,3.91,z,.2,.2,.08,metal);
+ const stem=cyl(id+' lamp stem',x,3.72,z,.035,.035,.3,metal);
+ const shade=cyl(id+' lamp shade',x,3.48,z,.2,.34,.22,mat(color,.3,.05));
+ const bulb=sphere(id+' visible glowing bulb',x,3.31,z,.13,new THREE.MeshStandardMaterial({color:0xffffff,emissive:color,emissiveIntensity:2.2}));
+ lampBulbs[id]={bulb,shade,light,color,base:light.intensity};
+}
+addCeilingLamp('kitchen',0,-1.3,0xffd89a,roomLights.kitchen);
+addCeilingLamp('bathroom',-4.15,7.0,0xc5e8ff,roomLights.bathroom);
+addCeilingLamp('toilet',-1.5,7.0,0xffe2b8,roomLights.toilet);
+addCeilingLamp('corridor',.8,1.4,0xffd89a,roomLights.corridor);
+addCeilingLamp('bedroom',3.0,7.0,0xffd39a,roomLights.bedroom);
 // Small snow particles in fridge area
 const snow=[];
 for(let i=0;i<24;i++){const p=sphere('snow',-5.55+Math.random()*.7,.55+Math.random()*1.5,-4.0+Math.random()*.8,.018,mat(0xcdf5ff));p.visible=false;snow.push(p)}
@@ -445,6 +460,8 @@ function addWallSwitch(label,x,y,z,rotation,light){
   isOn=!isOn;
   light.intensity=isOn?light.userData.defaultIntensity:0;
   button.material=isOn?white:dark;
+  const fixture=Object.values(lampBulbs).find(v=>v.light===light);
+  if(fixture){fixture.bulb.material.emissiveIntensity=isOn?2.2:0;fixture.bulb.material.color.set(isOn?0xffffff:0x33313a);fixture.shade.material.emissive=new THREE.Color(isOn?fixture.color:0x000000);fixture.shade.material.emissiveIntensity=isOn?.35:0;}
   hint(isOn?'Світло увімкнено.':'Світло вимкнено.');
  });
 }
@@ -522,6 +539,14 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
    [4.38,5.32,-4.92,-3.98],   // шухляди
    [.28,1.72,-5.48,-4.52],    // плита
    [5.02,5.68,-4.72,-3.98],   // смітник
+   [-5.98,-5.05,3.05,3.25],    // стіна коридору: ліва частина
+   [-3.95,-2.05,3.05,3.25],    // стіна коридору: середня частина
+   [-.95,2.0,3.05,3.25],       // стіна коридору: права частина
+   [4.0,5.98,3.05,3.25],       // стіна коридору: крайня частина
+   [-3.12,-2.88,3.05,4.35],    // перегородка ванної
+   [-3.12,-2.88,5.25,10.95],
+   [-.12,.12,3.05,4.35],       // перегородка спальні
+   [-.12,.12,5.25,10.95],
    [-4.95,-3.35,4.5,6.2],      // душова кабіна
    [-2.25,-1.25,4.7,6.05],     // унітаз
    [1.65,4.35,3.65,7.05]       // ліжко
