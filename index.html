@@ -159,7 +159,7 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
  <div id="movePad"><div id="moveNub"></div></div>
  <button id="handButton" aria-label="Взяти або використати">✋<small>ДІЯ</small></button>
 </div>
-<div id="gameStart"><div id="gameStartCard"><h2>Маленька пригода 🎂</h2><p>Підготуй усе до дня народження: дістань торт, приготуй чай, запали свічки та займи місце за столом.</p><p><b>Керування:</b> джойстик — рух, свайп по екрану — огляд, кнопка руки — взаємодія.</p><button id="startGame">Почати гру</button></div></div>
+<div id="gameStart"><div id="gameStartCard"><h2>Час починати свято! 🎂</h2><p>Попереду маленька пригода. Підготуй торт, завар чай, запали свічки — і відкрий святкову сторінку.</p><p><b>Режим занурення:</b> гра розгорнеться на весь екран. На телефоні грай у горизонтальному або вертикальному положенні, як зручно.</p><p><b>Керування:</b> джойстик — рух, свайп — огляд, кнопка руки — взаємодія.</p><button id="startGame">🎉 Почати свято</button></div></div>
 </div>
 <div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
 <main><section class="card">
@@ -319,7 +319,7 @@ target('Запальничка',lighterObj,()=>{if(!state.cakePlaced){hint('Сп
 target('Стілець',chair.children[0],()=>{if(state.litCount<2){hint('Спочатку запали обидві свічки.');return}state.sat=true;camera.position.set(0,1.5,2.1);camera.rotation.set(0,Math.PI,0);hint('Ти сів за стіл. З днем народження!');setTimeout(finishGame,1400)});
 const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false};
 function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візьми запальничку.');return}if(!state.cakePlaced){hint('Потрібен торт на столі.');return}const fl=flames[i];if(fl.visible)return;fl.visible=true;state.litCount++;lamp.intensity=state.litCount===1?1.2:2.8;warm.intensity=state.litCount===1?1.5:3.5;hint(state.litCount===1?'Перша свічка горить. Запали другу!':'Обидві свічки горять! Сідай на стілець.');if(state.litCount===2){scene.background=new THREE.Color(0x24172b);scene.fog.color.set(0x24172b)}}
-function finishGame(){root.classList.add('hidden');document.body.classList.remove('intro-active');document.getElementById('mainContent')?.classList.remove('hidden');document.querySelector('main').style.display='grid';document.querySelector('.stars').style.display='block';document.getElementById('sideStars').style.display='block';}
+function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});root.classList.add('hidden');document.body.classList.remove('intro-active');document.getElementById('mainContent')?.classList.remove('hidden');document.querySelector('main').style.display='grid';document.querySelector('.stars').style.display='block';document.getElementById('sideStars').style.display='block';}
 function carry(v){heldEl.textContent=v}
 function hint(t){hintEl.textContent=t;taskEl.textContent=t}
 let yaw=0,pitch=0,moveX=0,moveY=0,dragging=false,lastX=0,lastY=0,lookTouch=false;
@@ -348,6 +348,6 @@ snow.forEach((s,i)=>{if(s.visible){s.position.y+=Math.sin(Date.now()*.001+i)*.00
 renderer.render(scene,camera)}
 function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))}
 addEventListener('resize',resize);
-start.addEventListener('click',()=>{startScreen.style.display='none';hint('Підійди до холодильника. Наведи точку на дверцята й натисни ✋.');animate()});
+start.addEventListener('click',async()=>{try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'});}catch(e){/* Якщо браузер не дозволив fullscreen, гра все одно працює на весь екран вікна. */}startScreen.style.display='none';hint('Підійди до холодильника. Наведи точку на дверцята й натисни ✋.');animate()});
 animate();
 </script></body></html>
