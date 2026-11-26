@@ -468,7 +468,7 @@ function addWallSwitch(label,x,y,z,rotation,light){
 addWallSwitch('Вимикач кухні',5.78,1.42,-.55,Math.PI/2,roomLights.kitchen);
 addWallSwitch('Вимикач ванної',-5.78,1.42,5.15,Math.PI/2,roomLights.bathroom);
 addWallSwitch('Вимикач туалету',-.13,1.42,5.55,Math.PI/2,roomLights.toilet);
-addWallSwitch('Вимикач коридору',.13,1.42,7.65,Math.PI/2,roomLights.corridor);
+addWallSwitch('Вимикач коридору',-5.55,1.42,3.15,0,roomLights.corridor);
 addWallSwitch('Вимикач спальні',5.78,1.42,5.25,Math.PI/2,roomLights.bedroom);
 target('Дверцята холодильника',fridgeDoor,()=>{if(!state.fridgeOpen){state.fridgeOpen=true;fridgeDoor.rotation.y=-1.65;fridgeGlow.intensity=2.5;cake.visible=true;snow.forEach(s=>s.visible=true);hint('Холодильник відкрито. Торт на внутрішній полиці.')}else if(!state.cakeTaken){hint('Спочатку дістань торт із полиці.')}else{state.fridgeOpen=false;fridgeDoor.rotation.y=0;fridgeGlow.intensity=0;snow.forEach(s=>s.visible=false);hint('Холодильник зачинено.')}});
 target('Торт',cake,()=>{if(!state.fridgeOpen){hint('Спочатку відкрий холодильник.');return}if(state.cakeTaken){hint('Торт уже в тебе.');return}state.cakeTaken=true;cake.visible=false;carry('🎂');hint('Торт у руках. Підійди до столу та постав його.');});
