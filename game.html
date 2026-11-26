@@ -359,7 +359,7 @@ for(const x of [-1.2,1.2]){
  sphere('pendant bulb',x,3.04,-1.4,.075,mat(0xffe5ae));
 }
 // Декор столу: серветка, тарілка та ваза
-box('table runner',0,1.031,-1.6,1.8,.012,.48,mat(0xead0df),table);
+box('table runner',0,1.043,-1.6,2.05,.026,.68,mat(0xf2b8d5),table);
 cyl('serving plate',.82,1.055,-1.6,.22,.22,.025,white,table);
 const vase=cyl('flower vase',-.85,1.17,-1.6,.11,.15,.25,glass,table);
 for(let i=0;i<3;i++)sphere('table flowers',-.85+Math.cos(i*2.1)*.12,1.48,-1.6+Math.sin(i*2.1)*.1,.09,[pink,gold,mat(0xff9eb7)][i],table);
@@ -446,7 +446,31 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
  const delta=Math.min(clock.getDelta(),.05);
  if(dir.lengthSq()>0.0025){
   dir.clampLength(0,1).applyAxisAngle(new THREE.Vector3(0,1,0),yaw);
-  const step=dir.clone().clampLength(0,1).multiplyScalar(delta*3.4);camera.position.x+=step.x;camera.position.z+=step.z;
+  const step=dir.clone().clampLength(0,1).multiplyScalar(delta*3.4);
+  // Колізії з основними меблями.
+  const solids=[
+   [-5.98,-4.58,-4.28,-2.82], // холодильник
+   [-1.42,1.42,-2.48,-.72],   // стіл
+   [-.48,.48,-.52,.42],       // стілець
+   [-2.12,-1.32,-2.02,-1.18], // лівий стілець
+   [1.32,2.12,-2.02,-1.18],   // правий стілець
+   [4.18,5.92,-3.02,-1.98],   // тумба та раковина
+   [4.38,5.32,-4.92,-3.98],   // шухляди
+   [.28,1.72,-5.48,-4.52],    // плита
+   [5.02,5.68,-4.72,-3.98]    // смітник
+  ];
+  const radius=.27;
+  const blocked=(x,z)=>{
+   for(const r of solids){
+    const px=Math.max(r[0],Math.min(x,r[1])),pz=Math.max(r[2],Math.min(z,r[3]));
+    if((x-px)*(x-px)+(z-pz)*(z-pz)<radius*radius)return true;
+   }
+   return false;
+  };
+  const nx=Math.max(-5.2,Math.min(5.2,camera.position.x+step.x));
+  const nz=Math.max(-5.2,Math.min(5.2,camera.position.z+step.z));
+  if(!blocked(nx,camera.position.z))camera.position.x=nx;
+  if(!blocked(camera.position.x,nz))camera.position.z=nz;
  }
  camera.position.x=Math.max(-5.2,Math.min(5.2,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(5.2,camera.position.z));camera.position.y=1.65;
 ray.setFromCamera(new THREE.Vector2(0,0),camera);const hits=ray.intersectObjects(targets,true);currentTarget=null;for(const h of hits){let o=h.object;while(o&&!o.userData.action)o=o.parent;if(o&&o.userData.action&&h.distance<3.2){currentTarget=o;break}}
