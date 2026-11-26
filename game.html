@@ -301,7 +301,7 @@ const tap=cyl('tap',0,1.12,-.43,.045,.045,.28,metal,cabinet);
 box('tap spout',0,1.25,-.23,.075,.07,.32,metal,cabinet);
 const tapHead=box('tap control',.18,1.12,-.43,.08,.12,.08,metal,cabinet);
 const tapWater=cyl('water stream',0,1.02,-.02,.025,.025,.22,mat(0x63cfff),cabinet);tapWater.material.transparent=true;tapWater.material.opacity=0;
-const chair=new THREE.Group();chair.position.set(0,0,-3.05);chair.rotation.y=Math.PI;scene.add(chair);
+const chair=new THREE.Group();chair.position.set(4.65,0,9.15);chair.rotation.y=Math.PI/2;scene.add(chair);
 box('chair seat',0,.55,0,.85,.13,.8,wood2,chair);for(const x of [-.34,.34])for(const z of [-.3,.3])box('chair leg',x,.27,z,.09,.55,.09,wood,chair);box('chair back',0,1.1,-.34,.85,1,.12,wood2,chair);
 const diningChairs=[chair];
 // decorative wall lamp
@@ -562,7 +562,7 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
   const solids=[
    [-5.98,-4.58,-4.28,-2.82], // холодильник
    [-1.42,1.42,-2.48,-.72],   // стіл
-   [-.48,.48,-.52,.42],       // кухонний стілець біля входу
+   [4.12,5.18,8.62,9.68],    // нова колізія стільця у спальні
    [-2.12,-1.32,-2.02,-1.18], // лівий стілець
    [1.32,2.12,-2.02,-1.18],   // правий стілець
    [4.18,5.92,-3.02,-1.98],   // тумба та раковина
