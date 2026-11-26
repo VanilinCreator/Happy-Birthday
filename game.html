@@ -406,47 +406,33 @@ function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візь�
 function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});window.location.href='site.html';}
 function carry(v){heldEl.textContent=v}
 function hint(t){hintEl.textContent=t;taskEl.textContent=t}
-let yaw=0,pitch=0,moveX=0,moveY=0,lastX=0,lastY=0,lookTouch=false;
-const solidAreas=[
- {x1:-5.85,x2:-4.55,z1:-4.25,z2:-2.75}, // холодильник
- {x1:-1.38,x2:1.38,z1:-2.42,z2:-.78}, // обідній стіл
- {x1:4.22,x2:5.88,z1:-3.02,z2:-1.98}, // нижня тумба та раковина
- {x1:.34,x2:1.66,z1:-5.55,z2:-4.38}, // плита
- {x1:4.38,x2:5.32,z1:-4.92,z2:-4.02} // шухляди
-];
-function collidesAt(x,z){const r=.28;return solidAreas.some(a=>x+r>a.x1&&x-r<a.x2&&z+r>a.z1&&z-r<a.z2)}
-const clock=new THREE.Clock();const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact();if(e.key.toLowerCase()==='f')toggleFlashlight()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-function look(dx,dy){yaw-=dx*.004;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.003));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
+let yaw=0,pitch=0,moveX=0,moveY=0,lastX=0,lastY=0;
+const clock=new THREE.Clock();const keys={};
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact();if(e.key.toLowerCase()==='f')toggleFlashlight()});
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+function look(dx,dy){yaw-=dx*.005;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.004));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
 canvas.addEventListener('click',()=>{if(innerWidth>760&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas)look(e.movementX,e.movementY)});
-let lookPointerId=null;
-canvas.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'&&e.clientX>innerWidth*.32){lookPointerId=e.pointerId;lastX=e.clientX;lastY=e.clientY;try{canvas.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault()}},{passive:false});
-canvas.addEventListener('pointermove',e=>{if(lookPointerId!==e.pointerId)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;look(dx,dy);e.preventDefault()},{passive:false});
-function releaseLookPointer(e){if(lookPointerId===e.pointerId){lookPointerId=null;lookTouch=false}}
-canvas.addEventListener('pointerup',releaseLookPointer);canvas.addEventListener('pointercancel',releaseLookPointer);
-const pad=document.getElementById('movePad'),nub=document.getElementById('moveNub');let padId=null;
-function movePad(e){
+const pad=document.getElementById('movePad'),nub=document.getElementById('moveNub');
+let moveTouchId=null,lookTouchId=null;
+function updateStick(clientX,clientY){
  const r=pad.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
- let dx=e.clientX-cx,dy=e.clientY-cy;
- const max=Math.min(r.width,r.height)*.36,len=Math.hypot(dx,dy);
+ let dx=clientX-cx,dy=clientY-cy;const max=Math.min(r.width,r.height)*.36,len=Math.hypot(dx,dy);
  if(len>max){dx=dx/len*max;dy=dy/len*max}
- const dead=4,dist=Math.hypot(dx,dy);
- if(dist<dead){moveX=0;moveY=0}else{moveX=dx/max;moveY=dy/max}
+ moveX=Math.abs(dx)<4?0:dx/max;moveY=Math.abs(dy)<4?0:dy/max;
  nub.style.transform='translate('+dx+'px,'+dy+'px)';
 }
-function resetPad(e){
- if(e&&padId!==null&&e.pointerId!==padId)return;
- const oldId=padId;padId=null;moveX=0;moveY=0;nub.style.transform='translate(0,0)';
- if(oldId!==null&&pad.hasPointerCapture(oldId)){try{pad.releasePointerCapture(oldId)}catch(_){}}
-}
-pad.addEventListener('pointerdown',e=>{e.preventDefault();if(padId!==null)return;padId=e.pointerId;try{pad.setPointerCapture(e.pointerId)}catch(_){}movePad(e)});
-pad.addEventListener('pointermove',e=>{if(e.pointerId===padId){e.preventDefault();movePad(e)}});
-pad.addEventListener('pointerup',resetPad);pad.addEventListener('pointercancel',resetPad);pad.addEventListener('lostpointercapture',()=>{if(padId!==null)resetPad()});
-window.addEventListener('pointerup',e=>{if(e.pointerId===padId)resetPad(e)});
-window.addEventListener('blur',()=>resetPad());
-document.addEventListener('visibilitychange',()=>{if(document.hidden)resetPad()});
-hand.addEventListener('click',interact);
- flashlightButton.addEventListener('click',toggleFlashlight);
+function stopMove(){moveTouchId=null;moveX=0;moveY=0;nub.style.transform='translate(0,0)'}
+pad.addEventListener('touchstart',e=>{e.preventDefault();if(moveTouchId!==null)return;const t=e.changedTouches[0];moveTouchId=t.identifier;updateStick(t.clientX,t.clientY)},{passive:false});
+pad.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches)if(t.identifier===moveTouchId)updateStick(t.clientX,t.clientY)},{passive:false});
+function endMove(e){for(const t of e.changedTouches)if(t.identifier===moveTouchId)stopMove()}
+pad.addEventListener('touchend',endMove,{passive:false});pad.addEventListener('touchcancel',endMove,{passive:false});
+canvas.addEventListener('touchstart',e=>{for(const t of e.changedTouches){if(t.clientX>innerWidth*.34&&lookTouchId===null){lookTouchId=t.identifier;lastX=t.clientX;lastY=t.clientY}}},{passive:true});
+canvas.addEventListener('touchmove',e=>{for(const t of e.changedTouches)if(t.identifier===lookTouchId){const dx=t.clientX-lastX,dy=t.clientY-lastY;lastX=t.clientX;lastY=t.clientY;look(dx,dy);e.preventDefault()}},{passive:false});
+function endLook(e){for(const t of e.changedTouches)if(t.identifier===lookTouchId)lookTouchId=null}
+canvas.addEventListener('touchend',endLook,{passive:true});canvas.addEventListener('touchcancel',endLook,{passive:true});
+window.addEventListener('blur',stopMove);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMove()});
+hand.addEventListener('click',interact);flashlightButton.addEventListener('click',toggleFlashlight);
 const ray=new THREE.Raycaster();let currentTarget=null;
 function interact(){if(!currentTarget){hint('Наведи центральну точку на предмет ближче до себе.');return}currentTarget.userData.action?.()}
 function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
@@ -457,7 +443,7 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
  const delta=Math.min(clock.getDelta(),.05);
  if(dir.lengthSq()>0.0025){
   dir.clampLength(0,1).applyAxisAngle(new THREE.Vector3(0,1,0),yaw);
-  const step=dir.clone().clampLength(0,1).multiplyScalar(delta*3.4);const nx=camera.position.x+step.x,nz=camera.position.z+step.z;if(!collidesAt(nx,camera.position.z))camera.position.x=nx;if(!collidesAt(camera.position.x,nz))camera.position.z=nz;
+  const step=dir.clone().clampLength(0,1).multiplyScalar(delta*3.4);camera.position.x+=step.x;camera.position.z+=step.z;
  }
  camera.position.x=Math.max(-5.2,Math.min(5.2,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(5.2,camera.position.z));camera.position.y=1.65;
 ray.setFromCamera(new THREE.Vector2(0,0),camera);const hits=ray.intersectObjects(targets,true);currentTarget=null;for(const h of hits){let o=h.object;while(o&&!o.userData.action)o=o.parent;if(o&&o.userData.action&&h.distance<3.2){currentTarget=o;break}}
