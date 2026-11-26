@@ -265,10 +265,9 @@ window.__birthdayStartGame=()=>{
 };
 window.addEventListener('birthday-game-start',()=>window.__birthdayStartGame?.());
 async function bootBirthdayGame(){
- const root=document.getElementById('gameRoot');
- const start=document.getElementById('startGame');
- const startScreen=document.getElementById('gameStart');
- const hintEl=document.getElementById('gameHint');
+ const root=document.getElementById('gameRoot'),canvas=document.getElementById('gameCanvas');
+ const taskEl=document.getElementById('gameTask'),hintEl=document.getElementById('gameHint'),heldEl=document.getElementById('heldItem');
+ const hand=document.getElementById('handButton'),start=document.getElementById('startGame'),startScreen=document.getElementById('gameStart');
  try{
   start.disabled=true;
   start.textContent='Завантажуємо гру…';
