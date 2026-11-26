@@ -407,6 +407,14 @@ function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)doc
 function carry(v){heldEl.textContent=v}
 function hint(t){hintEl.textContent=t;taskEl.textContent=t}
 let yaw=0,pitch=0,moveX=0,moveY=0,lastX=0,lastY=0,lookTouch=false;
+const solidAreas=[
+ {x1:-5.85,x2:-4.55,z1:-4.25,z2:-2.75}, // холодильник
+ {x1:-1.38,x2:1.38,z1:-2.42,z2:-.78}, // обідній стіл
+ {x1:4.22,x2:5.88,z1:-3.02,z2:-1.98}, // нижня тумба та раковина
+ {x1:.34,x2:1.66,z1:-5.55,z2:-4.38}, // плита
+ {x1:4.38,x2:5.32,z1:-4.92,z2:-4.02} // шухляди
+];
+function collidesAt(x,z){const r=.28;return solidAreas.some(a=>x+r>a.x1&&x-r<a.x2&&z+r>a.z1&&z-r<a.z2)}
 const clock=new THREE.Clock();const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact();if(e.key.toLowerCase()==='f')toggleFlashlight()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 function look(dx,dy){yaw-=dx*.004;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.003));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
 canvas.addEventListener('click',()=>{if(innerWidth>760&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
@@ -449,7 +457,7 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
  const delta=Math.min(clock.getDelta(),.05);
  if(dir.lengthSq()>0.0025){
   dir.clampLength(0,1).applyAxisAngle(new THREE.Vector3(0,1,0),yaw);
-  camera.position.addScaledVector(dir,delta*3.4);
+  const step=dir.clone().clampLength(0,1).multiplyScalar(delta*3.4);const nx=camera.position.x+step.x,nz=camera.position.z+step.z;if(!collidesAt(nx,camera.position.z))camera.position.x=nx;if(!collidesAt(camera.position.x,nz))camera.position.z=nz;
  }
  camera.position.x=Math.max(-5.2,Math.min(5.2,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(5.2,camera.position.z));camera.position.y=1.65;
 ray.setFromCamera(new THREE.Vector2(0,0),camera);const hits=ray.intersectObjects(targets,true);currentTarget=null;for(const h of hits){let o=h.object;while(o&&!o.userData.action)o=o.parent;if(o&&o.userData.action&&h.distance<3.2){currentTarget=o;break}}
