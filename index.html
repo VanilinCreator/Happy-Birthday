@@ -272,10 +272,10 @@ cake.visible=false;
 const table=new THREE.Group();table.position.set(0,0,-1.6);scene.add(table);
 box('table top',0,.95,0,2.5,.16,1.5,wood2,table);
 for(const x of [-1,1])for(const z of [-.52,.52])box('table leg',x,.45,z,.14,.9,.14,wood,table);
-const mug=new THREE.Group();mug.position.set(.62,1.06,-1.6);scene.add(mug);
+const mug=new THREE.Group();mug.position.set(3.9,1.05,-.78);scene.add(mug);
 cyl('mug cup',0,.18,0,.16,.19,.36,white,mug);
 const handleRing=new THREE.Mesh(new THREE.TorusGeometry(.12,.035,8,20),white);handleRing.position.set(.16,.2,0);mug.add(handleRing);
-const tea=new THREE.Group();tea.position.set(.62,1.5,-1.6);scene.add(tea);
+const tea=new THREE.Group();tea.position.set(3.9,1.35,-.78);scene.add(tea);
 box('tea sachet',0,0,0,.13,.18,.025,mat(0xe9d7a9),tea);box('tea label',0,.03,.02,.07,.05,.01,mat(0x9a425c),tea);tea.visible=false;
 const kettle=new THREE.Group();kettle.position.set(2.6,0,-3.3);scene.add(kettle);
 cyl('kettle body',0,.55,0,.38,.4,.65,metal,kettle);cyl('kettle lid',0,.9,0,.28,.28,.08,dark,kettle);sphere('kettle knob',0,.99,0,.08,dark,kettle);
@@ -296,7 +296,7 @@ const chair=new THREE.Group();chair.position.set(0,0,1.2);scene.add(chair);
 box('chair seat',0,.55,0,.85,.13,.8,wood2,chair);for(const x of [-.34,.34])for(const z of [-.3,.3])box('chair leg',x,.27,z,.09,.55,.09,wood,chair);box('chair back',0,1.1,-.34,.85,1,.12,wood2,chair);
 // decorative wall lamp
 cyl('lamp shade',0,3.45,-5.65,.25,.35,.3,gold);sphere('lamp bulb',0,3.2,-5.65,.12,mat(0xffe6a5));
-const lighterObj=new THREE.Group();lighterObj.position.set(-.55,1.08,-1.6);scene.add(lighterObj);box('lighter case',0,.13,0,.16,.28,.08,metal,lighterObj);box('lighter cap',0,.3,0,.18,.08,.1,dark,lighterObj);sphere('lighter spark',0,.4,0,.06,mat(0xffae3c),lighterObj);lighterObj.visible=false;
+const lighterObj=new THREE.Group();lighterObj.position.set(-.55,1.08,-1.6);scene.add(lighterObj);box('lighter case',0,.13,0,.16,.28,.08,metal,lighterObj);box('lighter cap',0,.3,0,.18,.08,.1,dark,lighterObj);sphere('lighter spark',0,.4,0,.06,mat(0xffae3c),lighterObj);lighterObj.visible=true;
 const candleA=cyl('candle one',-.2,1.42,-1.6,.035,.035,.3,mat(0xf5c7dc),table),candleB=cyl('candle two',.2,1.42,-1.6,.035,.035,.3,mat(0xf5c7dc),table);
 candleA.visible=false;candleB.visible=false;
 const flames=[];
@@ -321,7 +321,7 @@ const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false
 function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візьми запальничку.');return}if(!state.cakePlaced){hint('Потрібен торт на столі.');return}const fl=flames[i];if(fl.visible)return;fl.visible=true;state.litCount++;lamp.intensity=state.litCount===1?1.2:2.8;warm.intensity=state.litCount===1?1.5:3.5;hint(state.litCount===1?'Перша свічка горить. Запали другу!':'Обидві свічки горять! Сідай на стілець.');if(state.litCount===2){scene.background=new THREE.Color(0x24172b);scene.fog.color.set(0x24172b)}}
 function finishGame(){root.classList.add('hidden');document.body.classList.remove('intro-active');document.getElementById('mainContent')?.classList.remove('hidden');document.querySelector('main').style.display='grid';document.querySelector('.stars').style.display='block';document.getElementById('sideStars').style.display='block';}
 function carry(v){heldEl.textContent=v}
-function hint(t){hintEl.textContent=t}
+function hint(t){hintEl.textContent=t;taskEl.textContent=t}
 let yaw=0,pitch=0,moveX=0,moveY=0,dragging=false,lastX=0,lastY=0,lookTouch=false;
 const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 function look(dx,dy){yaw-=dx*.004;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.003));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
