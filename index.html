@@ -256,48 +256,27 @@ window.startBirthdayGame=function(){
 
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
-const root=document.getElementById('gameRoot'),canvas=document.getElementById('gameCanvas');
-const taskEl=document.getElementById('gameTask'),hintEl=document.getElementById('gameHint'),heldEl=document.getElementById('heldItem');
-const hand=document.getElementById('handButton'),start=document.getElementById('startGame'),startScreen=document.getElementById('gameStart');
-// Ранній обробник запуску: кнопка лишається активною навіть якщо ініціалізація 3D затрималась.
-let gameStarted=false;
-let startRequested=false;
 window.__birthdayGameReady=function(){};
-window.addEventListener('birthday-game-start',()=>window.__birthdayStartGame?.());
-window.__birthdayStartGame=async()=>{
- if(startRequested)return;
- startRequested=true;
- start.disabled=true;
- start.textContent='Завантажуємо гру…';
- try{
-  if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'});
- }catch(e){}
- root.classList.add('playing');
- startScreen.style.display='none';
- hintEl.textContent='Запускаємо пригоду…';
- if(typeof animate==='function'){
-  try{
-   gameStarted=true;
-   animate();
-   hintEl.textContent='Підійди до холодильника. Наведи точку на дверцята й натисни ✋.';
-  }catch(err){
-   root.classList.remove('playing');
-   startScreen.style.display='grid';
-   start.disabled=false;
-   start.textContent='Спробувати ще раз';
-   startRequested=false;
-   hintEl.textContent='Не вдалося запустити 3D-гру. Онови сторінку та спробуй ще раз.';
-   console.error('Помилка запуску гри:',err);
-  }
- }else{
-  startScreen.style.display='grid';
-  start.disabled=false;
-  start.textContent='Спробувати ще раз';
-  startRequested=false;
-  hintEl.textContent='3D-модуль ще не завантажився. Перевір інтернет і перезавантаж сторінку.';
- }
+let birthdayGameBoot=null;
+window.__birthdayStartGame=()=>{
+ if(birthdayGameBoot)return birthdayGameBoot;
+ birthdayGameBoot=bootBirthdayGame();
+ return birthdayGameBoot;
 };
-
+window.addEventListener('birthday-game-start',()=>window.__birthdayStartGame?.());
+async function bootBirthdayGame(){
+ const root=document.getElementById('gameRoot');
+ const start=document.getElementById('startGame');
+ const startScreen=document.getElementById('gameStart');
+ const hintEl=document.getElementById('gameHint');
+ try{
+  start.disabled=true;
+  start.textContent='Завантажуємо гру…';
+  if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'}).catch(()=>{});
+  root.classList.add('playing');
+  startScreen.style.display='none';
+  hintEl.textContent='Створюємо кухню…';
+  let gameStarted=false;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x100d1c);scene.fog=new THREE.Fog(0x100d1c,9,22);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,80);camera.position.set(0,1.65,5);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -548,4 +527,18 @@ renderer.render(scene,camera)}
 function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))}
 addEventListener('resize',resize);
 
+
+  gameStarted=true;
+  animate();
+  hintEl.textContent='Підійди до холодильника. Наведи точку на дверцята й натисни ✋.';
+ }catch(err){
+  console.error('Помилка запуску Happy Birthday:',err);
+  root.classList.remove('playing');
+  startScreen.style.display='grid';
+  start.disabled=false;
+  start.textContent='Спробувати ще раз';
+  hintEl.textContent='Не вдалося створити гру: '+(err?.message||'невідома помилка')+'. Перевір інтернет і спробуй ще раз.';
+  birthdayGameBoot=null;
+ }
+}
 </script></body></html>
