@@ -401,7 +401,7 @@ cyl('toilet pedestal',0,.28,0,.28,.32,.55,white,toilet);cyl('toilet bowl',0,.48,
 const toiletSeat=cyl('toilet seat',0,.62,0,.45,.45,.07,dark,toilet);toiletSeat.scale.set(1,.18,1);
 box('toilet tank',0,.9,-.28,.68,.72,.28,white,toilet);scene.add(toilet);
 // Ліжко у спальні.
-const bed=new THREE.Group();bed.position.set(3.0,0,5.35);scene.add(bed);
+const bed=new THREE.Group();bed.position.set(4.65,0,5.35);bed.scale.x=.85;scene.add(bed);
 box('bed frame',0,.38,0,2.45,.42,3.1,bedWood,bed);
 box('bed mattress',0,.68,0,2.35,.28,3.0,white,bed);
 box('bed blanket',0,.84,.48,2.3,.12,1.95,bedFabric,bed);
@@ -511,10 +511,10 @@ for(const [index,seatGroup] of diningChairs.entries()){
 // Приховані мішені на висоті погляду — підлога та низькі меблі більше не заважають натисканню.
 const showerAim=box('shower interaction zone',-4.15,1.45,5.35,.85,1.5,.85,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
 const toiletAim=box('toilet interaction zone',-1.75,1.35,5.35,.85,1.35,.85,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
-const bedAim=box('bed interaction zone',3,1.35,4.15,1.1,1.4,.8,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
+const bedAim=box('bed interaction zone',4.65,1.35,4.15,1.1,1.4,.8,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
 target('Душ',showerAim,async()=>{if(!state.ate){hint('Спочатку закінчи святковий сніданок.');return}if(state.showered||sequenceBusy)return;sequenceBusy=true;hint('🚿 Ти приймаєш душ…');await fadeScreen(250);playWaterSound(2,false);await new Promise(r=>setTimeout(r,2000));state.showered=true;await revealScreen(350);objective('🚽 Тепер скористайся туалетом.');hint('Душ прийнято! Тепер іди до туалету.');sequenceBusy=false;});
 target('Туалет',toiletAim,async()=>{if(!state.showered){hint('Спочатку прийми душ.');return}if(state.usedToilet||sequenceBusy)return;sequenceBusy=true;hint('🚽 Зачекай мить…');await fadeScreen(250);playWaterSound(2,true);await new Promise(r=>setTimeout(r,2000));state.usedToilet=true;await revealScreen(350);objective('🛏️ Іди до ліжка у спальні та лягай спати.');hint('Готово! Тепер іди до ліжка.');sequenceBusy=false;});
-target('Ліжко',bedAim,async()=>{if(!state.usedToilet){hint('Спочатку прийми душ, а потім скористайся туалетом.');return}if(state.slept||sequenceBusy)return;sequenceBusy=true;hint('🌙 Ти лягаєш спати…');await tweenCamera([3,1.02,4.55],[-.12,0,0],850);await tweenCamera([3,1.1,4.5],[.95,0,0],650);await fadeScreen(650);state.slept=true;objective('🌙 На добраніч! День завершено.');hint('День завершено!');await new Promise(r=>setTimeout(r,1200));finishGame();});
+target('Ліжко',bedAim,async()=>{if(!state.usedToilet){hint('Спочатку прийми душ, а потім скористайся туалетом.');return}if(state.slept||sequenceBusy)return;sequenceBusy=true;hint('🌙 Ти лягаєш спати…');await tweenCamera([4.65,1.02,4.55],[-.12,0,0],850);await tweenCamera([4.65,1.1,4.5],[.95,0,0],650);await fadeScreen(650);state.slept=true;objective('🌙 На добраніч! День завершено.');hint('День завершено!');await new Promise(r=>setTimeout(r,1200));finishGame();});
 const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,mugPlaced:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false,ate:false,showered:false,usedToilet:false,slept:false};
 function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візьми запальничку.');return}if(!state.cakePlaced){hint('Потрібен торт на столі.');return}const fl=flames[i];if(fl.visible)return;fl.visible=true;state.litCount++;lamp.intensity=state.litCount===1?1.2:2.8;warm.intensity=state.litCount===1?1.5:3.5;hint(state.litCount===1?'Перша свічка горить. Запали другу!':'Обидві свічки горять! Сідай на стілець.');if(state.litCount===2){objective('🍽️ Сідай на будь-який із трьох стільців і заверши сніданок.');scene.background=new THREE.Color(0x24172b);scene.fog.color.set(0x24172b)}}
 function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});window.location.href='site.html';}
@@ -577,7 +577,7 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
    [-.12,.12,3.05,10.95],      // суцільна стіна між туалетом та спальнею
    [-4.95,-3.35,4.5,6.2],      // душова кабіна
    [-2.25,-1.25,4.7,6.05],     // унітаз
-   [1.65,4.35,3.65,7.05]       // ліжко
+   [3.55,5.75,3.65,7.05]       // ліжко, залишаємо вільний прохід від дверей
   ];
   const radius=.27;
   const blocked=(x,z)=>{
