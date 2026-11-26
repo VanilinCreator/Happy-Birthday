@@ -218,6 +218,13 @@ function box(name,x,y,z,sx,sy,sz,material,group=scene){const o=new THREE.Mesh(ne
 function sphere(name,x,y,z,r,material,group=scene){const o=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),material);o.name=name;o.position.set(x,y,z);o.castShadow=true;group.add(o);return o}
 function cyl(name,x,y,z,rt,rb,h,material,group=scene){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,20),material);o.name=name;o.position.set(x,y,z);o.castShadow=true;group.add(o);return o}
 const floor=box('floor',0,-.12,0,12,.2,12,mat(0x392b3e));floor.receiveShadow=true;
+// Розширена частина будинку: коридор, ванна кімната та спальня.
+box('extended floor',0,-.125,7,12,.19,8,mat(0x392b3e));
+box('left extension wall',-5.9,2,8, .2,4,8,wall);box('right extension wall',5.9,2,8,.2,4,8,wall);
+box('far extension wall',0,2,10.9,12,4,.2,wall);
+box('bathroom back wall',-3.0,2,8.65,5.8,4,.16,wall);
+box('bedroom back wall',3.0,2,8.65,5.8,4,.16,wall);
+box('room divider',0,2,6.2,.16,4,4.8,wall);
 box('back wall',0,2,-6,12,4,.2,wall);box('left wall',-6,2,0,.2,4,12,wall);box('right wall',6,2,0,.2,4,12,wall);
 for(let i=0;i<6;i++)box('floor plank',0,.001,-5+i*2,11.8,.012,.025,wood2);
 const ceiling=box('ceiling',0,4,0,12,.12,12,mat(0x211c2b));
@@ -371,6 +378,27 @@ for(const [x,z,rot] of [[-1.72,-1.6,Math.PI/2],[1.72,-1.6,-Math.PI/2]]){
  box('dining chair back',0,1.02,-.3,.72,.86,.1,wood2,cg);
  diningChairs.push(cg);
 }
+// Нова зона після святкового столу: ванна кімната та спальня.
+const bathTile=mat(0x9bb8c8),bedFabric=mat(0x79658d),bedWood=mat(0x684633);
+// Душова кабіна в лівій частині прибудови.
+box('shower tray',-4.15,.12,5.35,1.45,.22,1.55,white);
+box('shower back panel',-4.15,1.45,6.08,1.45,2.7,.08,bathTile);
+box('shower side panel',-4.88,1.45,5.35,.08,2.7,1.55,bathTile);
+box('shower glass panel',-3.43,1.45,5.35,.035,2.7,1.55,glass);
+cyl('shower pole',-4.72,2.55,4.78,.035,.035,.75,steel);
+cyl('shower head',-4.25,2.55,4.78,.12,.12,.08,steel);
+// Унітаз поруч із душем.
+const toilet=new THREE.Group();toilet.position.set(-1.75,0,5.35);
+cyl('toilet pedestal',0,.28,0,.28,.32,.55,white,toilet);cyl('toilet bowl',0,.48,0,.43,.43,.25,white,toilet);
+const toiletSeat=cyl('toilet seat',0,.62,0,.45,.45,.07,dark,toilet);toiletSeat.scale.set(1,.18,1);
+box('toilet tank',0,.9,-.28,.68,.72,.28,white,toilet);scene.add(toilet);
+// Ліжко у спальні.
+const bed=new THREE.Group();bed.position.set(3.0,0,5.35);scene.add(bed);
+box('bed frame',0,.38,0,2.45,.42,3.1,bedWood,bed);
+box('bed mattress',0,.68,0,2.35,.28,3.0,white,bed);
+box('bed blanket',0,.84,.48,2.3,.12,1.95,bedFabric,bed);
+box('bed pillow left',-.62,.88,-1.12,.82,.22,.62,white,bed);box('bed pillow right',.62,.88,-1.12,.82,.22,.62,white,bed);
+box('bed headboard',0,1.12,-1.58,2.5,1.35,.16,bedWood,bed);
 // Кошик, смітник і килимок біля мийки
 const bin=cyl('kitchen bin',5.35,.48,-4.35,.28,.34,.9,steel);
 cyl('bin lid',5.35,.96,-4.35,.3,.3,.08,dark);
@@ -403,8 +431,11 @@ target('Кришка чайника',kettle.children[1],()=>{state.kettleClosed=
 target('Кружка',mug,()=>{if(state.mugTaken){hint('Віднеси кружку до столу та постав її.');return}if(!state.boiledDone){hint('Спочатку закип’яти воду.');return}if(!state.teaInMug){if(!state.teaTaken){hint('Спочатку дістань пакетик чаю з тумби.');return}state.teaInMug=true;state.teaTaken=false;hint('Пакетик у кружці. Натисни на кружку ще раз, щоб залити окропом.');return}if(!state.poured){state.poured=true;state.teaDone=true;hint('Чай готовий! Тепер можеш взяти кружку й віднести її на стіл.');return}if(state.teaDone){state.mugTaken=true;mug.visible=false;carry('☕');hint('Кружка з готовим чаєм у руках. Віднеси її до столу.')}});
 const mugDrop=new THREE.Mesh(new THREE.BoxGeometry(.75,.12,.65),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));mugDrop.position.set(.82,1.08,-1.6);scene.add(mugDrop);target('Місце для кружки',mugDrop,()=>{if(!state.mugTaken){hint('Спочатку візьми кружку.');return}mug.position.set(.82,1.08,-1.6);mug.visible=true;state.mugTaken=false;state.mugPlaced=true;carry('');hint('Кружку поставлено на стіл!')});
 target('Запальничка',lighterObj,()=>{if(!state.cakePlaced){hint('Спочатку постав торт на стіл.');return}if(!state.teaDone){hint('Спочатку приготуй чай.');return}state.lighterTaken=true;lighterObj.visible=false;carry('🔥');hint('Запальничка в руках. Запали дві свічки на торті.')});
-for(const [index,seatGroup] of diningChairs.entries()){target('Стілець '+(index+1),seatGroup.children[0],()=>{if(state.litCount<2){hint('Спочатку запали обидві свічки.');return}state.sat=true;const p=new THREE.Vector3();seatGroup.getWorldPosition(p);const q=new THREE.Quaternion();seatGroup.getWorldQuaternion(q);const front=new THREE.Vector3(0,0,1).applyQuaternion(q);camera.position.copy(p).addScaledVector(front,1.05);camera.position.y=1.5;camera.lookAt(0,1.1,-1.6);hint('Ти сів на стілець '+(index+1)+'. З днем народження!');setTimeout(finishGame,1400)})}
-const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,mugPlaced:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false};
+for(const [index,seatGroup] of diningChairs.entries()){target('Стілець '+(index+1),seatGroup.children[0],()=>{if(state.litCount<2){hint('Спочатку запали обидві свічки.');return}if(!state.mugPlaced){hint('Спочатку постав кружку з чаєм на стіл.');return}state.ate=true;hint('Ти поїв! Тепер прямуй у ванну кімнату та прийми душ.');taskEl.textContent='🚿 Час прийняти душ';})}
+target('Душ',toilet.children[0],()=>{if(!state.ate){hint('Спочатку закінчи святкову вечерю.');return}if(state.showered){hint('Ти вже прийняв душ. Тепер скористайся туалетом.');return}state.showered=true;hint('Душ прийнято! Тепер підійди до туалету.');taskEl.textContent='🚽 Час у туалет';});
+target('Туалет',toilet.children[1],()=>{if(!state.showered){hint('Спочатку прийми душ.');return}if(state.usedToilet){hint('Це вже зроблено. Тепер іди спати.');return}state.usedToilet=true;hint('Готово! Тепер іди до ліжка у спальні.');taskEl.textContent='🛏️ Час спати';});
+target('Ліжко',bed.children[0],()=>{if(!state.usedToilet){hint('Спочатку сходи в душ, а потім у туалет.');return}state.slept=true;hint('Ти ліг спати. День завершено!');taskEl.textContent='🌙 На добраніч!';setTimeout(finishGame,1800)});
+const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,mugPlaced:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false,ate:false,showered:false,usedToilet:false,slept:false};
 function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візьми запальничку.');return}if(!state.cakePlaced){hint('Потрібен торт на столі.');return}const fl=flames[i];if(fl.visible)return;fl.visible=true;state.litCount++;lamp.intensity=state.litCount===1?1.2:2.8;warm.intensity=state.litCount===1?1.5:3.5;hint(state.litCount===1?'Перша свічка горить. Запали другу!':'Обидві свічки горять! Сідай на стілець.');if(state.litCount===2){scene.background=new THREE.Color(0x24172b);scene.fog.color.set(0x24172b)}}
 function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});window.location.href='site.html';}
 function carry(v){heldEl.textContent=v}
@@ -457,7 +488,10 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
    [4.18,5.92,-3.02,-1.98],   // тумба та раковина
    [4.38,5.32,-4.92,-3.98],   // шухляди
    [.28,1.72,-5.48,-4.52],    // плита
-   [5.02,5.68,-4.72,-3.98]    // смітник
+   [5.02,5.68,-4.72,-3.98],   // смітник
+   [-4.95,-3.35,4.5,6.2],      // душова кабіна
+   [-2.25,-1.25,4.7,6.05],     // унітаз
+   [1.65,4.35,3.65,7.05]       // ліжко
   ];
   const radius=.27;
   const blocked=(x,z)=>{
@@ -467,12 +501,12 @@ function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
    }
    return false;
   };
-  const nx=Math.max(-5.2,Math.min(5.2,camera.position.x+step.x));
-  const nz=Math.max(-5.2,Math.min(5.2,camera.position.z+step.z));
+  const nx=Math.max(-5.55,Math.min(5.55,camera.position.x+step.x));
+  const nz=Math.max(-5.2,Math.min(10.35,camera.position.z+step.z));
   if(!blocked(nx,camera.position.z))camera.position.x=nx;
   if(!blocked(camera.position.x,nz))camera.position.z=nz;
  }
- camera.position.x=Math.max(-5.2,Math.min(5.2,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(5.2,camera.position.z));camera.position.y=1.65;
+ camera.position.x=Math.max(-5.55,Math.min(5.55,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(10.35,camera.position.z));camera.position.y=1.65;
 ray.setFromCamera(new THREE.Vector2(0,0),camera);const hits=ray.intersectObjects(targets,true);currentTarget=null;for(const h of hits){let o=h.object;while(o&&!o.userData.action)o=o.parent;if(o&&o.userData.action&&h.distance<3.2){currentTarget=o;break}}
 hand.style.opacity=currentTarget?'1':'.65';
 if(currentTarget)hand.querySelector('small').textContent='ДІЯ';else hand.querySelector('small').textContent='ОБРАТИ';
