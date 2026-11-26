@@ -237,6 +237,41 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.m
 const root=document.getElementById('gameRoot'),canvas=document.getElementById('gameCanvas');
 const taskEl=document.getElementById('gameTask'),hintEl=document.getElementById('gameHint'),heldEl=document.getElementById('heldItem');
 const hand=document.getElementById('handButton'),start=document.getElementById('startGame'),startScreen=document.getElementById('gameStart');
+// Ранній обробник запуску: кнопка лишається активною навіть якщо ініціалізація 3D затрималась.
+let gameStarted=false;
+let startRequested=false;
+start.addEventListener('click',async()=>{
+ if(startRequested)return;
+ startRequested=true;
+ start.disabled=true;
+ start.textContent='Завантажуємо гру…';
+ try{
+  if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'});
+ }catch(e){}
+ startScreen.style.display='none';
+ hintEl.textContent='Запускаємо пригоду…';
+ if(typeof animate==='function'){
+  try{
+   gameStarted=true;
+   animate();
+   hintEl.textContent='Підійди до холодильника. Наведи точку на дверцята й натисни ✋.';
+  }catch(err){
+   startScreen.style.display='grid';
+   start.disabled=false;
+   start.textContent='Спробувати ще раз';
+   startRequested=false;
+   hintEl.textContent='Не вдалося запустити 3D-гру. Онови сторінку та спробуй ще раз.';
+   console.error('Помилка запуску гри:',err);
+  }
+ }else{
+  startScreen.style.display='grid';
+  start.disabled=false;
+  start.textContent='Спробувати ще раз';
+  startRequested=false;
+  hintEl.textContent='3D-модуль ще не завантажився. Перевір інтернет і перезавантаж сторінку.';
+ }
+});
+
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x100d1c);scene.fog=new THREE.Fog(0x100d1c,9,22);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,80);camera.position.set(0,1.65,5);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -468,7 +503,6 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)resetPad()}
 hand.addEventListener('click',interact);
 const ray=new THREE.Raycaster();let currentTarget=null;
 function interact(){if(!currentTarget){hint('Наведи центральну точку на предмет ближче до себе.');return}currentTarget.userData.action?.()}
-let gameStarted=false;
 function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
  const forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-moveY;
  const strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
@@ -487,5 +521,5 @@ snow.forEach((s,i)=>{if(s.visible){s.position.y+=Math.sin(Date.now()*.001+i)*.00
 renderer.render(scene,camera)}
 function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))}
 addEventListener('resize',resize);
-start.addEventListener('click',async()=>{try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'});}catch(e){/* Якщо браузер не дозволив fullscreen, гра все одно працює на весь екран вікна. */}startScreen.style.display='none';hint('Підійди до холодильника. Наведи точку на дверцята й натисни ✋.');if(!gameStarted){gameStarted=true;animate()} });
+
 </script></body></html>
