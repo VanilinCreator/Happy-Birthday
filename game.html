@@ -168,7 +168,6 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
  <div id="gameHint">Підійди до холодильника та наведи точку на дверцята.</div>
  <div id="movePad"><div id="moveNub"></div></div>
  <button id="handButton" aria-label="Взяти або використати">✋<small>ДІЯ</small></button>
- <button id="flashlightButton" type="button" aria-label="Увімкнути ліхтарик" aria-pressed="false">🔦<small>ЛІХТАРИК</small></button>
 </div>
 <div id="gameStart"><div id="gameStartCard"><h2>Час починати свято! 🎂</h2><p>Попереду маленька пригода. Підготуй торт, завар чай, запали свічки — і відкрий святкову сторінку.</p><p><b>Режим занурення:</b> гра розгорнеться на весь екран. На телефоні грай у горизонтальному або вертикальному положенні, як зручно.</p><p><b>Керування:</b> джойстик — рух, свайп — огляд, кнопка руки — взаємодія.</p><p id="gameError" role="alert"></p><button id="startGame" type="button" onclick="window.startBirthdayGame()">🎉 Почати свято</button></div></div>
 
@@ -189,7 +188,7 @@ window.addEventListener('birthday-game-start',()=>window.__birthdayStartGame?.()
 async function bootBirthdayGame(){
  const root=document.getElementById('gameRoot'),canvas=document.getElementById('gameCanvas');
  const taskEl=document.getElementById('gameTask'),hintEl=document.getElementById('gameHint'),heldEl=document.getElementById('heldItem');
- const hand=document.getElementById('handButton'),flashlightButton=document.getElementById('flashlightButton'),start=document.getElementById('startGame'),startScreen=document.getElementById('gameStart'),errorEl=document.getElementById('gameError');
+ const hand=document.getElementById('handButton'),start=document.getElementById('startGame'),startScreen=document.getElementById('gameStart'),errorEl=document.getElementById('gameError');
  let bootStage='підготовка';
  try{
   start.disabled=true;
@@ -208,8 +207,6 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0x100d1c);scene.f
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,80);camera.position.set(3.0,1.65,8.6);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 scene.add(new THREE.HemisphereLight(0xbacbff,0x453047,.72));
- const flashlight=new THREE.SpotLight(0xfff0cf,0,14,Math.PI/7,.45,1.2);flashlight.position.set(0,0,0);flashlight.target.position.set(0,0,-8);scene.add(flashlight);scene.add(flashlight.target);let flashlightOn=false;
- function toggleFlashlight(){flashlightOn=!flashlightOn;flashlight.intensity=flashlightOn?32:0;flashlightButton.classList.toggle('active',flashlightOn);flashlightButton.setAttribute('aria-pressed',String(flashlightOn));flashlightButton.setAttribute('aria-label',flashlightOn?'Вимкнути ліхтарик':'Увімкнути ліхтарик')}
 const lamp=new THREE.PointLight(0xffc98b,0,12);lamp.position.set(0,3.1,0);scene.add(lamp);
 const warm=new THREE.PointLight(0xffb85c,0,5);warm.position.set(0,1.5,-2.5);scene.add(warm);
 const mat=(c,r=.8,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
@@ -486,28 +483,7 @@ function tweenCamera(toPos,toRot,duration=900){
   requestAnimationFrame(step);
  });
 }
-function addWallSwitch(label,x,y,z,rotation,light){
- const plate=box(label+' plate',x,y,z,.19,.27,.045,metal);
- plate.rotation.y=rotation;
- const button=box(label+' button',x,y,z+(.035*Math.cos(rotation)),.105,.15,.055,white);
- button.rotation.y=rotation;
- let isOn=true;
- light.userData.defaultIntensity=light.intensity;
- target(label,button,()=>{
-  isOn=!isOn;
-  light.intensity=isOn?light.userData.defaultIntensity:0;
-  button.material=isOn?white:dark;
-  const fixture=Object.values(lampBulbs).find(v=>v.light===light);
-  if(fixture){fixture.bulb.material.emissiveIntensity=isOn?2.2:0;fixture.bulb.material.color.set(isOn?0xffffff:0x33313a);fixture.shade.material.emissive=new THREE.Color(isOn?fixture.color:0x000000);fixture.shade.material.emissiveIntensity=isOn?.35:0;}
-  hint(isOn?'Світло увімкнено.':'Світло вимкнено.');
- });
-}
-addWallSwitch('Вимикач кухні',5.78,1.42,-.55,Math.PI/2,roomLights.kitchen);
-addWallSwitch('Вимикач ванної',-5.78,1.42,5.15,Math.PI/2,roomLights.bathroom);
-addWallSwitch('Вимикач туалету',-.13,1.42,5.55,Math.PI/2,roomLights.toilet);
-addWallSwitch('Вимикач коридору',-5.55,1.42,3.15,0,roomLights.corridor);
-addWallSwitch('Вимикач спальні',5.78,1.42,5.25,Math.PI/2,roomLights.bedroom);
-target('Дверцята холодильника',fridgeDoor,()=>{if(!state.fridgeOpen){state.fridgeOpen=true;fridgeDoor.rotation.y=-1.65;fridgeGlow.intensity=2.5;cake.visible=true;snow.forEach(s=>s.visible=true);hint('Холодильник відкрито. Торт на внутрішній полиці.')}else if(!state.cakeTaken){hint('Спочатку дістань торт із полиці.')}else{state.fridgeOpen=false;fridgeDoor.rotation.y=0;fridgeGlow.intensity=0;snow.forEach(s=>s.visible=false);hint('Холодильник зачинено.')}});
+настінні вимикачіtarget('Дверцята холодильника',fridgeDoor,()=>{if(!state.fridgeOpen){state.fridgeOpen=true;fridgeDoor.rotation.y=-1.65;fridgeGlow.intensity=2.5;cake.visible=true;snow.forEach(s=>s.visible=true);hint('Холодильник відкрито. Торт на внутрішній полиці.')}else if(!state.cakeTaken){hint('Спочатку дістань торт із полиці.')}else{state.fridgeOpen=false;fridgeDoor.rotation.y=0;fridgeGlow.intensity=0;snow.forEach(s=>s.visible=false);hint('Холодильник зачинено.')}});
 target('Торт',cake,()=>{if(!state.fridgeOpen){hint('Спочатку відкрий холодильник.');return}if(state.cakeTaken){hint('Торт уже в тебе.');return}state.cakeTaken=true;cake.visible=false;carry('🎂');hint('Торт у руках. Підійди до столу та постав його.');});
 target('Місце для торта',table.children[0],()=>{if(!state.cakeTaken){hint('Спочатку принеси торт.');return}state.cakePlaced=true;state.cakeTaken=false;carry('');objective('🍵 Приготуй чай: знайди пакетик, набери воду в чайник і закип’яти її.');cakeOnTable=new THREE.Group();cakeOnTable.position.set(0,1.08,-1.6);scene.add(cakeOnTable);cyl('birthday cake base',0,.08,0,.48,.5,.16,mat(0xf3c8dc),cakeOnTable);cyl('birthday cake top',0,.2,0,.44,.44,.12,mat(0xffddeb),cakeOnTable);for(let i=0;i<2;i++){const cc=cyl('plain candle',-.12+i*.24,.36,0,.035,.035,.22,mat(0xf4c6dc),cakeOnTable);cc.userData.candleIndex=i;target('Свічка',cc,()=>lightCandle(i))}hint('Торт на столі! Тепер приготуй чай.');});
 target('Дверцята тумби',cabDoor,()=>{state.cabinetOpen=!state.cabinetOpen;cabDoor.rotation.y=state.cabinetOpen?-1.35:0;tea.visible=state.cabinetOpen&&!state.teaTaken;hint(state.cabinetOpen?'Тумба відкрита. Пакетик лежить усередині.':'Тумбу зачинено.')});
@@ -547,7 +523,7 @@ function hint(t){hintEl.textContent=t}
 function objective(t){taskEl.textContent=t}
 let yaw=0,pitch=0,moveX=0,moveY=0,lastX=0,lastY=0;
 const clock=new THREE.Clock();const keys={};
-addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact();if(e.key.toLowerCase()==='f')toggleFlashlight()});
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 function look(dx,dy){yaw-=dx*.005;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.004));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
 canvas.addEventListener('click',()=>{if(innerWidth>760&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
@@ -575,7 +551,6 @@ hand.addEventListener('click',interact);flashlightButton.addEventListener('click
 const ray=new THREE.Raycaster();let currentTarget=null;
 function interact(){if(!currentTarget){hint('Наведи центральну точку на предмет ближче до себе.');return}currentTarget.userData.action?.()}
 function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
- if(flashlightOn){const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);flashlight.position.copy(camera.position);flashlight.target.position.copy(camera.position).addScaledVector(dir,8)}
  const forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-moveY;
  const strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
  const dir=new THREE.Vector3(strafe,0,-forward);
