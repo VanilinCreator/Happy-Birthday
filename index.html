@@ -232,6 +232,24 @@ document.getElementById('party').addEventListener('click',()=>confetti(100));
 function confetti(count){const colors=['#ff9ecb','#ffd18b','#c6a4ff','#8de5dc','#fff'];for(let i=0;i<count;i++){const el=document.createElement('i');el.className='confetti';el.textContent=['✦','●','♥','✧'][Math.floor(Math.random()*4)];el.style.left=Math.random()*100+'vw';el.style.color=colors[Math.floor(Math.random()*colors.length)];el.style.fontSize=(10+Math.random()*16)+'px';el.style.animationDuration=(2.5+Math.random()*3)+'s';document.body.appendChild(el);setTimeout(()=>el.remove(),6000)}}
 
 </script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const button=document.getElementById('startGame');
+ const screen=document.getElementById('gameStart');
+ const hint=document.getElementById('gameHint');
+ if(!button)return;
+ button.addEventListener('click',()=>{
+  if(typeof window.__birthdayStartGame==='function'){
+   window.__birthdayStartGame();
+  }else{
+   button.disabled=false;
+   button.textContent='Модуль гри не завантажився';
+   if(hint)hint.textContent='Не вдалося завантажити 3D-гру. Перевір інтернет-з’єднання та натисни «Оновити сторінку».';
+   if(screen)screen.style.display='grid';
+  }
+ });
+});
+</script>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
 const root=document.getElementById('gameRoot'),canvas=document.getElementById('gameCanvas');
@@ -240,7 +258,7 @@ const hand=document.getElementById('handButton'),start=document.getElementById('
 // Ранній обробник запуску: кнопка лишається активною навіть якщо ініціалізація 3D затрималась.
 let gameStarted=false;
 let startRequested=false;
-start.addEventListener('click',async()=>{
+window.__birthdayStartGame=async()=>{
  if(startRequested)return;
  startRequested=true;
  start.disabled=true;
@@ -270,7 +288,7 @@ start.addEventListener('click',async()=>{
   startRequested=false;
   hintEl.textContent='3D-модуль ще не завантажився. Перевір інтернет і перезавантаж сторінку.';
  }
-});
+};
 
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x100d1c);scene.fog=new THREE.Fog(0x100d1c,9,22);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,80);camera.position.set(0,1.65,5);
