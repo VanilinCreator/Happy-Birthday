@@ -134,7 +134,7 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
 #aimDot{position:absolute;left:50%;top:50%;width:8px;height:8px;border:1.5px solid white;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 5px #000,0 0 10px #fff8}
 #handButton{position:absolute;right:24px;bottom:calc(34px + env(safe-area-inset-bottom));width:76px;height:76px;border-radius:50%;border:1px solid #ffffff75;background:#241936dd;color:#fff;font-size:30px;pointer-events:auto;box-shadow:0 5px 24px #0009;touch-action:none}
 #handButton small{display:block;font-size:10px;font-weight:800;letter-spacing:.08em}
-#movePad{position:absolute;left:24px;bottom:calc(28px + env(safe-area-inset-bottom));width:124px;height:124px;border-radius:50%;border:1px solid #ffffff40;background:#ffffff13;pointer-events:auto;touch-action:none}#moveNub{pointer-events:none;touch-action:none;will-change:transform}
+#movePad{position:absolute;left:24px;bottom:calc(28px + env(safe-area-inset-bottom));width:124px;height:124px;border-radius:50%;border:1px solid #ffffff40;background:#ffffff13;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;z-index:5}#moveNub{pointer-events:none;touch-action:none;will-change:transform}
 #moveNub{position:absolute;width:52px;height:52px;left:35px;top:35px;border-radius:50%;background:#ffffff55;border:1px solid #ffffff88;box-shadow:0 3px 12px #0006}
 #lookHelp{position:absolute;right:18px;top:75px;color:#ffffffa8;font-size:11px;text-align:right}
 #heldItem{position:absolute;right:24px;bottom:125px;font-size:42px;filter:drop-shadow(0 3px 8px #000);pointer-events:none}
@@ -258,13 +258,20 @@ box('window frame',-3.2,2.45,-5.86,2.1,1.55,.12,wood2);box('window glass',-3.2,2
 box('curtain left',-4.35,2.5,-5.65,.35,1.8,.18,pink);box('curtain right',-2.05,2.5,-5.65,.35,1.8,.18,pink);
 // Refrigerator at rear-left
 const fridge= new THREE.Group();fridge.position.set(-4.2,0,-3.6);scene.add(fridge);
-box('fridge body',0,1.25,0,1.25,2.5,1.1,white,fridge);
-const fridgeDoor=new THREE.Group();fridgeDoor.position.set(-.625,1.25,.57);fridge.add(fridgeDoor);
-box('fridge door',.625,0,0,1.25,2.5,.16,mat(0xdde5ed),fridgeDoor);
-box('fridge handle',1.08,.05,.12,.055,.65,.08,metal,fridgeDoor);
-const fridgeGlow=new THREE.PointLight(0x9de8ff,0,3);fridgeGlow.position.set(0,1.4,.85);fridge.add(fridgeGlow);
-box('fridge shelf',0,1.55,.62,1.05,.06,.65,white,fridge);box('fridge shelf',0,.8,.62,1.05,.06,.65,white,fridge);
-const cake=new THREE.Group();cake.position.set(-4.2,.95,-3.15);scene.add(cake);
+// Порожнистий корпус: задня стінка, боковини, дах і дно — без суцільного блока всередині.
+box('fridge left wall',-.57,1.25,0,.11,2.5,1.1,white,fridge);
+box('fridge right wall',.57,1.25,0,.11,2.5,1.1,white,fridge);
+box('fridge back wall',0,1.25,-.5,1.25,2.5,.1,white,fridge);
+box('fridge top',0,2.46,0,1.25,.08,1.1,white,fridge);
+box('fridge bottom',0,.05,0,1.25,.1,1.1,white,fridge);
+const fridgeDoor=new THREE.Group();fridgeDoor.position.set(-.625,1.25,.56);fridge.add(fridgeDoor);
+box('fridge door',.625,0,0,1.25,2.5,.13,mat(0xdde5ed),fridgeDoor);
+box('fridge handle',1.08,.05,.1,.055,.65,.08,metal,fridgeDoor);
+// Внутрішні полиці коротші за глибину корпусу, тому дверцята їх не зачіпають.
+box('fridge inner shelf upper',0,1.55,-.02,1.02,.055,.78,white,fridge);
+box('fridge inner shelf lower',0,.82,-.02,1.02,.055,.78,white,fridge);
+const fridgeGlow=new THREE.PointLight(0x9de8ff,0,3);fridgeGlow.position.set(0,1.35,.18);fridge.add(fridgeGlow);
+const cake=new THREE.Group();cake.position.set(-4.2,.88,-3.6);scene.add(cake);
 cyl('cake base',0,.08,0,.38,.4,.16,mat(0xf3c8dc),cake);cyl('cake sponge',0,.27,0,.34,.34,.25,mat(0x9a4d70),cake);cyl('cake icing',0,.42,0,.35,.35,.08,mat(0xffddeb),cake);
 for(let i=0;i<5;i++){const berry=sphere('berry',Math.cos(i*1.25)*.2,.49,Math.sin(i*1.25)*.2,.055,mat(0xc93665),cake)}
 cake.visible=false;
@@ -272,27 +279,34 @@ cake.visible=false;
 const table=new THREE.Group();table.position.set(0,0,-1.6);scene.add(table);
 box('table top',0,.95,0,2.5,.16,1.5,wood2,table);
 for(const x of [-1,1])for(const z of [-.52,.52])box('table leg',x,.45,z,.14,.9,.14,wood,table);
-const mug=new THREE.Group();mug.position.set(3.9,1.05,-.78);scene.add(mug);
+const mug=new THREE.Group();mug.position.set(4.25,1.98,-1.12);scene.add(mug);
 cyl('mug cup',0,.18,0,.16,.19,.36,white,mug);
 const handleRing=new THREE.Mesh(new THREE.TorusGeometry(.12,.035,8,20),white);handleRing.position.set(.16,.2,0);mug.add(handleRing);
-const tea=new THREE.Group();tea.position.set(3.9,1.35,-.78);scene.add(tea);
+const tea=new THREE.Group();tea.position.set(3.9,.82,-1.02);scene.add(tea);
 box('tea sachet',0,0,0,.13,.18,.025,mat(0xe9d7a9),tea);box('tea label',0,.03,.02,.07,.05,.01,mat(0x9a425c),tea);tea.visible=false;
-const kettle=new THREE.Group();kettle.position.set(2.6,0,-3.3);scene.add(kettle);
+const kettle=new THREE.Group();kettle.position.set(3.35,1.45,-1.2);scene.add(kettle);
 cyl('kettle body',0,.55,0,.38,.4,.65,metal,kettle);cyl('kettle lid',0,.9,0,.28,.28,.08,dark,kettle);sphere('kettle knob',0,.99,0,.08,dark,kettle);
 const spout=cyl('kettle spout',.38,.73,-.02,.08,.12,.4,metal,kettle);spout.rotation.z=-.9;
 const kettleHandle=new THREE.Mesh(new THREE.TorusGeometry(.27,.045,8,20,Math.PI),dark);kettleHandle.position.set(-.28,.75,0);kettle.add(kettleHandle);
-const steamGroup=new THREE.Group();scene.add(steamGroup);steamGroup.position.set(2.6,1.1,-3.3);
+const steamGroup=new THREE.Group();scene.add(steamGroup);steamGroup.position.set(3.35,2.55,-1.2);
 for(let i=0;i<7;i++){const s=sphere('steam',Math.sin(i)*.12,i*.16,Math.cos(i)*.1,.045,mat(0xffffff));s.material.transparent=true;s.material.opacity=.0;steamGroup.add(s)}
 // Cabinet and sink
 const cabinet=new THREE.Group();cabinet.position.set(3.9,0,-1.2);scene.add(cabinet);
-box('cabinet body',0,.9,0,1.6,1.8,.8,wood,cabinet);
-const cabDoor=new THREE.Group();cabDoor.position.set(-.8,1.1,.43);cabinet.add(cabDoor);box('cabinet door',.4,0,0,.8,1.25,.1,wood2,cabDoor);box('cabinet knob',.68,0,.08,.06,.1,.08,gold,cabDoor);
+// Нижня тумба з вільною передньою частиною та порожнім внутрішнім об'ємом.
+box('cabinet left side',-.75,.9,0,.1,1.8,.8,wood,cabinet);
+box('cabinet right side',.75,.9,0,.1,1.8,.8,wood,cabinet);
+box('cabinet back panel',0,.9,-.35,1.5,1.8,.1,wood,cabinet);
+box('cabinet bottom panel',0,.08,0,1.5,.12,.8,wood,cabinet);
+box('cabinet inner shelf',0,.72,-.02,1.42,.07,.68,wood2,cabinet);
+const cabDoor=new THREE.Group();cabDoor.position.set(-.8,1.1,.43);cabinet.add(cabDoor);
+box('cabinet door',.8,0,0,1.6,1.25,.07,wood2,cabDoor);
+box('cabinet knob',1.48,0,.06,.06,.1,.08,gold,cabDoor);
 box('counter',0,1.9,0,1.9,.16,1.05,cream,cabinet);
 const sink=box('sink basin',-.3,1.99,.05,.72,.07,.56,metal,cabinet);
 const tap=cyl('tap',.55,2.16,-.1,.045,.045,.38,metal,cabinet);tap.rotation.x=.1;
 const tapHead=box('tap spout',.55,2.34,.05,.32,.07,.08,metal,cabinet);
 const tapWater=cyl('water stream',.55,2.08,.05,.025,.025,.28,mat(0x63cfff),cabinet);tapWater.material.transparent=true;tapWater.material.opacity=0;
-const chair=new THREE.Group();chair.position.set(0,0,1.2);scene.add(chair);
+const chair=new THREE.Group();chair.position.set(0,0,1.15);scene.add(chair);
 box('chair seat',0,.55,0,.85,.13,.8,wood2,chair);for(const x of [-.34,.34])for(const z of [-.3,.3])box('chair leg',x,.27,z,.09,.55,.09,wood,chair);box('chair back',0,1.1,-.34,.85,1,.12,wood2,chair);
 // decorative wall lamp
 cyl('lamp shade',0,3.45,-5.65,.25,.35,.3,gold);sphere('lamp bulb',0,3.2,-5.65,.12,mat(0xffe6a5));
@@ -374,7 +388,7 @@ cyl('serving plate',.82,1.055,-1.6,.22,.22,.025,white,table);
 const vase=cyl('flower vase',-.85,1.17,-1.6,.11,.15,.25,glass,table);
 for(let i=0;i<3;i++)sphere('table flowers',-.85+Math.cos(i*2.1)*.12,1.48,-1.6+Math.sin(i*2.1)*.1,.09,[pink,gold,mat(0xff9eb7)][i],table);
 // Додаткові стільці біля обіднього столу
-for(const [x,z,rot] of [[-1.9,1.25,Math.PI/2],[1.9,1.25,-Math.PI/2]]){
+for(const [x,z,rot] of [[-1.72,-1.6,Math.PI/2],[1.72,-1.6,-Math.PI/2]]){
  const cg=new THREE.Group();cg.position.set(x,0,z);cg.rotation.y=rot;scene.add(cg);
  box('dining chair seat',0,.55,0,.72,.12,.7,wood2,cg);
  for(const xx of [-.28,.28])for(const zz of [-.27,.27])box('dining chair leg',xx,.27,zz,.08,.54,.08,wood,cg);
@@ -397,26 +411,27 @@ box('right wall baseboard',5.86,.12,0,.08,.18,11.7,wood2);
 
 // Small snow particles in fridge area
 const snow=[];
-for(let i=0;i<24;i++){const p=sphere('snow',-4.2+Math.random()*.9,Math.random()*2.2-3.6, -2.85+Math.random()*.35,.018,mat(0xcdf5ff));p.visible=false;snow.push(p)}
+for(let i=0;i<24;i++){const p=sphere('snow',-4.55+Math.random()*.9,.55+Math.random()*1.5,-3.85+Math.random()*.4,.018,mat(0xcdf5ff));p.visible=false;snow.push(p)}
 // object interaction anchors
 const targets=[];
 function target(name,obj,action){obj.userData.interact=name;obj.userData.action=action;targets.push(obj);return obj}
-target('Дверцята холодильника',fridgeDoor,()=>{if(!state.fridgeOpen){state.fridgeOpen=true;fridgeDoor.rotation.y=-1.65;fridgeGlow.intensity=2.5;cake.visible=true;snow.forEach(s=>s.visible=true);hint('Усередині холодно! Тепер візьми торт.')}else if(!state.cakeTaken){hint('Спочатку дістань торт.')}else{state.fridgeOpen=false;fridgeDoor.rotation.y=0;fridgeGlow.intensity=0;snow.forEach(s=>s.visible=false);hint('Холодильник зачинено.')}});
+target('Дверцята холодильника',fridgeDoor,()=>{if(!state.fridgeOpen){state.fridgeOpen=true;fridgeDoor.rotation.y=-1.65;fridgeGlow.intensity=2.5;cake.visible=true;snow.forEach(s=>s.visible=true);hint('Холодильник відкрито. Торт на внутрішній полиці.')}else if(!state.cakeTaken){hint('Спочатку дістань торт із полиці.')}else{state.fridgeOpen=false;fridgeDoor.rotation.y=0;fridgeGlow.intensity=0;snow.forEach(s=>s.visible=false);hint('Холодильник зачинено.')}});
 target('Торт',cake,()=>{if(!state.fridgeOpen){hint('Спочатку відкрий холодильник.');return}if(state.cakeTaken){hint('Торт уже в тебе.');return}state.cakeTaken=true;cake.visible=false;carry('🎂');hint('Торт у руках. Підійди до столу та постав його.');});
 target('Місце для торта',table.children[0],()=>{if(!state.cakeTaken){hint('Спочатку принеси торт.');return}state.cakePlaced=true;state.cakeTaken=false;carry('');const cakeOnTable=new THREE.Group();cakeOnTable.position.set(0,1.08,-1.6);scene.add(cakeOnTable);cyl('birthday cake base',0,.08,0,.48,.5,.16,mat(0xf3c8dc),cakeOnTable);cyl('birthday cake top',0,.2,0,.44,.44,.12,mat(0xffddeb),cakeOnTable);for(let i=0;i<2;i++){const cc=cyl('plain candle',-.12+i*.24,.36,0,.035,.035,.22,mat(0xf4c6dc),cakeOnTable);cc.userData.candleIndex=i;target('Свічка',cc,()=>lightCandle(i))}hint('Торт на столі! Тепер приготуй чай.');});
-target('Дверцята тумби',cabDoor,()=>{state.cabinetOpen=!state.cabinetOpen;cabDoor.rotation.y=state.cabinetOpen?1.35:0;tea.visible=state.cabinetOpen&&!state.teaTaken;hint(state.cabinetOpen?'Тумба відкрита. Дістань пакетик чаю.':'Тумбу зачинено.')});
-target('Пакетик чаю',tea,()=>{if(!state.cabinetOpen){hint('Спочатку відкрий тумбу.');return}if(!state.teaTaken){state.teaTaken=true;tea.visible=false;carry('🫖');hint('Пакетик чаю взято. Постав його в кружку.')}});
-target('Чайник',kettle,()=>{if(!state.kettleFilled){hint('Спочатку набери воду з крана.');return}if(!state.kettleClosed){state.kettleClosed=true;hint('Кришку чайника закрито. Натисни ще раз, щоб увімкнути кип’ятіння.');return}if(!state.boiled){state.boiled=true;hint('Чайник кипить...');setTimeout(()=>{state.boiledDone=true;hint('Вода закипіла! Візьми кружку з тумби.');steamGroup.children.forEach(s=>s.material.opacity=.45)},2400);return}if(state.boiledDone){hint('Чайник уже закипів. Тепер приготуй чай у кружці.')}});
+target('Дверцята тумби',cabDoor,()=>{state.cabinetOpen=!state.cabinetOpen;cabDoor.rotation.y=state.cabinetOpen?1.35:0;tea.visible=state.cabinetOpen&&!state.teaTaken;hint(state.cabinetOpen?'Тумба відкрита. Пакетик лежить усередині.':'Тумбу зачинено.')});
+target('Пакетик чаю',tea,()=>{if(!state.cabinetOpen){hint('Спочатку відкрий тумбу.');return}if(!state.teaTaken){state.teaTaken=true;tea.visible=false;carry('🍵');hint('Пакетик чаю взято. Поклади його в кружку.')}});
+target('Чайник',kettle,()=>{if(!state.kettleTaken){state.kettleTaken=true;kettle.visible=false;carry('🫖');hint('Чайник у руках. Підійди до крана й натисни на нього, щоб набрати воду.');return}if(!state.kettleFilled){hint('Піднеси чайник до крана та набери воду.');return}if(!state.kettleClosed){state.kettleClosed=true;hint('Кришку чайника закрито. Натисни на чайник ще раз, щоб увімкнути кип’ятіння.');return}if(!state.boiled){state.boiled=true;hint('Чайник кипить...');setTimeout(()=>{state.boiledDone=true;hint('Вода закипіла! Тепер приготуй чай у кружці.');steamGroup.children.forEach(s=>s.material.opacity=.45)},2400);return}if(state.boiledDone){hint('Вода вже закипіла. Приготуй чай у кружці.')}});
+target('Кран',tapHead,()=>{if(!state.kettleTaken){hint('Спочатку візьми чайник зі стільниці.');return}if(!state.kettleFilled){state.kettleFilled=true;state.kettleTaken=false;kettle.visible=true;carry('');tapWater.material.opacity=.65;hint('Чайник наповнено водою. Постав його на стільницю та закрий кришку.')}else{state.tapOpen=!state.tapOpen;tapWater.material.opacity=state.tapOpen?.65:0;hint(state.tapOpen?'Вода тече.':'Кран закрито.')}});
 target('Кришка чайника',kettle.children[1],()=>{state.kettleClosed=true;hint('Чайник закрито. Натисни на нього, щоб увімкнути кип’ятіння.')});
 target('Кружка',mug,()=>{if(!state.boiledDone){hint('Спочатку закип’яти воду.');return}if(!state.mugTaken){state.mugTaken=true;hint('Кружку взято. Натисни ще раз, щоб покласти пакетик чаю.');return}if(!state.teaInMug){if(!state.teaTaken){hint('Спочатку дістань пакетик чаю з тумби.');return}state.teaInMug=true;state.teaTaken=false;carry('');hint('Пакетик у кружці. Натисни ще раз, щоб залити окропом.');return}if(!state.poured){state.poured=true;state.teaDone=true;state.mugTaken=false;hint('Чай готовий! Тепер візьми запальничку біля столу.')}});
 target('Запальничка',lighterObj,()=>{if(!state.cakePlaced){hint('Спочатку постав торт на стіл.');return}if(!state.teaDone){hint('Спочатку приготуй чай.');return}state.lighterTaken=true;lighterObj.visible=false;carry('🔥');hint('Запальничка в руках. Запали дві свічки на торті.')});
 target('Стілець',chair.children[0],()=>{if(state.litCount<2){hint('Спочатку запали обидві свічки.');return}state.sat=true;camera.position.set(0,1.5,2.1);camera.rotation.set(0,Math.PI,0);hint('Ти сів за стіл. З днем народження!');setTimeout(finishGame,1400)});
-const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false};
+const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false};
 function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візьми запальничку.');return}if(!state.cakePlaced){hint('Потрібен торт на столі.');return}const fl=flames[i];if(fl.visible)return;fl.visible=true;state.litCount++;lamp.intensity=state.litCount===1?1.2:2.8;warm.intensity=state.litCount===1?1.5:3.5;hint(state.litCount===1?'Перша свічка горить. Запали другу!':'Обидві свічки горять! Сідай на стілець.');if(state.litCount===2){scene.background=new THREE.Color(0x24172b);scene.fog.color.set(0x24172b)}}
 function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});root.classList.add('hidden');document.body.classList.remove('intro-active');document.getElementById('mainContent')?.classList.remove('hidden');document.querySelector('main').style.display='grid';document.querySelector('.stars').style.display='block';document.getElementById('sideStars').style.display='block';}
 function carry(v){heldEl.textContent=v}
 function hint(t){hintEl.textContent=t;taskEl.textContent=t}
-let yaw=0,pitch=0,moveX=0,moveY=0,dragging=false,lastX=0,lastY=0,lookTouch=false;
+let yaw=0,pitch=0,moveX=0,moveY=0,lastX=0,lastY=0,lookTouch=false;
 const clock=new THREE.Clock();const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 function look(dx,dy){yaw-=dx*.004;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.003));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
 canvas.addEventListener('click',()=>{if(innerWidth>760&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
@@ -428,45 +443,47 @@ function releaseLookTouch(e){if(lookTouchId===null)return;for(const t of e.chang
 canvas.addEventListener('touchend',releaseLookTouch,{passive:true});
 canvas.addEventListener('touchcancel',releaseLookTouch,{passive:true});
 const pad=document.getElementById('movePad'),nub=document.getElementById('moveNub');let padId=null;
-pad.addEventListener('pointerdown',e=>{e.preventDefault();if(padId!==null)return;padId=e.pointerId;pad.setPointerCapture(e.pointerId);movePad(e)});
-pad.addEventListener('pointermove',e=>{if(e.pointerId===padId){e.preventDefault();movePad(e)}});
 function movePad(e){
  const r=pad.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
  let dx=e.clientX-cx,dy=e.clientY-cy;
- const max=Math.min(r.width,r.height)*.34,len=Math.hypot(dx,dy);
+ const max=Math.min(r.width,r.height)*.36,len=Math.hypot(dx,dy);
  if(len>max){dx=dx/len*max;dy=dy/len*max}
- const dead=5;
- moveX=Math.abs(dx)<dead?0:dx/max;
- moveY=Math.abs(dy)<dead?0:dy/max;
+ const dead=4,dist=Math.hypot(dx,dy);
+ if(dist<dead){moveX=0;moveY=0}else{moveX=dx/max;moveY=dy/max}
  nub.style.transform='translate('+dx+'px,'+dy+'px)';
 }
 function resetPad(e){
  if(e&&padId!==null&&e.pointerId!==padId)return;
- if(padId!==null&&pad.hasPointerCapture(padId))pad.releasePointerCapture(padId);
- padId=null;moveX=0;moveY=0;nub.style.transform='translate(0,0)';
+ const oldId=padId;padId=null;moveX=0;moveY=0;nub.style.transform='translate(0,0)';
+ if(oldId!==null&&pad.hasPointerCapture(oldId)){try{pad.releasePointerCapture(oldId)}catch(_){}}
 }
-pad.addEventListener('pointerup',resetPad);pad.addEventListener('pointercancel',resetPad);pad.addEventListener('lostpointercapture',resetPad);
+pad.addEventListener('pointerdown',e=>{e.preventDefault();if(padId!==null)return;padId=e.pointerId;try{pad.setPointerCapture(e.pointerId)}catch(_){}movePad(e)});
+pad.addEventListener('pointermove',e=>{if(e.pointerId===padId){e.preventDefault();movePad(e)}});
+pad.addEventListener('pointerup',resetPad);pad.addEventListener('pointercancel',resetPad);pad.addEventListener('lostpointercapture',()=>{if(padId!==null)resetPad()});
+window.addEventListener('pointerup',e=>{if(e.pointerId===padId)resetPad(e)});
+window.addEventListener('blur',()=>resetPad());
+document.addEventListener('visibilitychange',()=>{if(document.hidden)resetPad()});
 hand.addEventListener('click',interact);
 const ray=new THREE.Raycaster();let currentTarget=null;
 function interact(){if(!currentTarget){hint('Наведи центральну точку на предмет ближче до себе.');return}currentTarget.userData.action?.()}
-function animate(){requestAnimationFrame(animate);
+let gameStarted=false;
+function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
  const forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-moveY;
  const strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
  const dir=new THREE.Vector3(strafe,0,-forward);
+ const delta=Math.min(clock.getDelta(),.05);
  if(dir.lengthSq()>0.0025){
   dir.clampLength(0,1).applyAxisAngle(new THREE.Vector3(0,1,0),yaw);
-  const delta=Math.min(clock.getDelta(),.05);
   camera.position.addScaledVector(dir,delta*3.4);
- }else{clock.getDelta()}
+ }
  camera.position.x=Math.max(-5.2,Math.min(5.2,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(5.2,camera.position.z));camera.position.y=1.65;
 ray.setFromCamera(new THREE.Vector2(0,0),camera);const hits=ray.intersectObjects(targets,true);currentTarget=null;for(const h of hits){let o=h.object;while(o&&!o.userData.action)o=o.parent;if(o&&o.userData.action&&h.distance<3.2){currentTarget=o;break}}
 hand.style.opacity=currentTarget?'1':'.65';
 if(currentTarget)hand.querySelector('small').textContent='ДІЯ';else hand.querySelector('small').textContent='ОБРАТИ';
 if(state.tapOpen){tapWater.rotation.z+=.02}
-snow.forEach((s,i)=>{if(s.visible){s.position.y+=Math.sin(Date.now()*.001+i)*.0008-.001;if(s.position.y<-3.8)s.position.y=-1.5}});
+snow.forEach((s,i)=>{if(s.visible){s.position.y+=Math.sin(Date.now()*.001+i)*.0008-.001;if(s.position.y<.45)s.position.y=1.9}});
 renderer.render(scene,camera)}
 function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))}
 addEventListener('resize',resize);
-start.addEventListener('click',async()=>{try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'});}catch(e){/* Якщо браузер не дозволив fullscreen, гра все одно працює на весь екран вікна. */}startScreen.style.display='none';hint('Підійди до холодильника. Наведи точку на дверцята й натисни ✋.');animate()});
-animate();
+start.addEventListener('click',async()=>{try{if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'});}catch(e){/* Якщо браузер не дозволив fullscreen, гра все одно працює на весь екран вікна. */}startScreen.style.display='none';hint('Підійди до холодильника. Наведи точку на дверцята й натисни ✋.');if(!gameStarted){gameStarted=true;animate()} });
 </script></body></html>
