@@ -127,7 +127,7 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
  
 /* 3D birthday adventure */
 #gameRoot{position:fixed;inset:0;z-index:60;background:#080711;display:block;color:#fff;font-family:system-ui,sans-serif}
-#gameCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#gameCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 #gameHud{position:absolute;inset:0;pointer-events:none}
 #gameTask{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:min(90%,520px);padding:12px 18px;border:1px solid #ffffff30;border-radius:16px;background:#100d20c9;text-align:center;backdrop-filter:blur(10px);font-weight:700;box-shadow:0 8px 30px #0006}
 #gameHint{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(88%,420px);text-align:center;color:#fff;background:#100d20c9;border:1px solid #ffffff35;border-radius:14px;padding:10px 14px;font-size:.9rem}
@@ -327,9 +327,12 @@ const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e
 function look(dx,dy){yaw-=dx*.004;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.003));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
 canvas.addEventListener('click',()=>{if(innerWidth>760&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas)look(e.movementX,e.movementY)});
-canvas.addEventListener('touchstart',e=>{if(e.touches.length){lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;lookTouch=true}},{passive:true});
-canvas.addEventListener('touchmove',e=>{if(!lookTouch||!e.touches.length)return;const t=e.touches[0],dx=t.clientX-lastX,dy=t.clientY-lastY;lastX=t.clientX;lastY=t.clientY;if(t.clientX>innerWidth*.32)look(dx,dy)},{passive:true});
-canvas.addEventListener('touchend',()=>lookTouch=false);
+let lookTouchId=null;
+canvas.addEventListener('touchstart',e=>{for(const t of e.changedTouches){if(t.clientX>innerWidth*.32&&lookTouchId===null){lookTouchId=t.identifier;lastX=t.clientX;lastY=t.clientY;lookTouch=true;break}}},{passive:true});
+canvas.addEventListener('touchmove',e=>{if(lookTouchId===null)return;const t=Array.from(e.touches).find(v=>v.identifier===lookTouchId);if(!t)return;const dx=t.clientX-lastX,dy=t.clientY-lastY;lastX=t.clientX;lastY=t.clientY;look(dx,dy);e.preventDefault()},{passive:false});
+function releaseLookTouch(e){if(lookTouchId===null)return;for(const t of e.changedTouches){if(t.identifier===lookTouchId){lookTouchId=null;lookTouch=false;break}}}
+canvas.addEventListener('touchend',releaseLookTouch,{passive:true});
+canvas.addEventListener('touchcancel',releaseLookTouch,{passive:true});
 const pad=document.getElementById('movePad'),nub=document.getElementById('moveNub');let padId=null;
 pad.addEventListener('pointerdown',e=>{padId=e.pointerId;pad.setPointerCapture(padId);movePad(e)});
 pad.addEventListener('pointermove',e=>{if(e.pointerId===padId)movePad(e)});
