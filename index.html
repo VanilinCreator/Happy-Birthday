@@ -159,7 +159,7 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
  <div id="movePad"><div id="moveNub"></div></div>
  <button id="handButton" aria-label="Взяти або використати">✋<small>ДІЯ</small></button>
 </div>
-<div id="gameStart"><div id="gameStartCard"><h2>Час починати свято! 🎂</h2><p>Попереду маленька пригода. Підготуй торт, завар чай, запали свічки — і відкрий святкову сторінку.</p><p><b>Режим занурення:</b> гра розгорнеться на весь екран. На телефоні грай у горизонтальному або вертикальному положенні, як зручно.</p><p><b>Керування:</b> джойстик — рух, свайп — огляд, кнопка руки — взаємодія.</p><button id="startGame">🎉 Почати свято</button></div></div>
+<div id="gameStart"><div id="gameStartCard"><h2>Час починати свято! 🎂</h2><p>Попереду маленька пригода. Підготуй торт, завар чай, запали свічки — і відкрий святкову сторінку.</p><p><b>Режим занурення:</b> гра розгорнеться на весь екран. На телефоні грай у горизонтальному або вертикальному положенні, як зручно.</p><p><b>Керування:</b> джойстик — рух, свайп — огляд, кнопка руки — взаємодія.</p><button id="startGame" type="button" onclick="window.startBirthdayGame()">🎉 Почати свято</button></div></div>
 </div>
 <div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
 <main><section class="card">
@@ -233,23 +233,23 @@ function confetti(count){const colors=['#ff9ecb','#ffd18b','#c6a4ff','#8de5dc','
 
 </script>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+window.startBirthdayGame=function(){
  const button=document.getElementById('startGame');
  const screen=document.getElementById('gameStart');
  const hint=document.getElementById('gameHint');
- if(!button)return;
- button.addEventListener('click',()=>{
-  if(typeof window.__birthdayStartGame==='function'){
-   window.__birthdayStartGame();
-  }else{
-   button.disabled=false;
-   button.textContent='Модуль гри не завантажився';
-   if(hint)hint.textContent='Не вдалося завантажити 3D-гру. Перевір інтернет-з’єднання та натисни «Оновити сторінку».';
+ if(button){button.disabled=true;button.textContent='Завантажуємо гру…'}
+ if(hint)hint.textContent='Запускаємо пригоду…';
+ window.dispatchEvent(new Event('birthday-game-start'));
+ setTimeout(()=>{
+  if(typeof window.__birthdayGameReady!=='function'){
+   if(button){button.disabled=false;button.textContent='Спробувати ще раз'}
    if(screen)screen.style.display='grid';
+   if(hint)hint.textContent='3D-рушій не завантажився. Перевір інтернет або відкрий сайт у Chrome та онови сторінку.';
   }
- });
-});
+ },1800);
+};
 </script>
+
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
 const root=document.getElementById('gameRoot'),canvas=document.getElementById('gameCanvas');
@@ -258,6 +258,8 @@ const hand=document.getElementById('handButton'),start=document.getElementById('
 // Ранній обробник запуску: кнопка лишається активною навіть якщо ініціалізація 3D затрималась.
 let gameStarted=false;
 let startRequested=false;
+window.__birthdayGameReady=function(){};
+window.addEventListener('birthday-game-start',()=>window.__birthdayStartGame?.());
 window.__birthdayStartGame=async()=>{
  if(startRequested)return;
  startRequested=true;
