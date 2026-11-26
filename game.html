@@ -399,6 +399,15 @@ cyl('shower head',-4.25,2.55,4.78,.12,.12,.08,steel);
 const toilet=new THREE.Group();toilet.position.set(-1.75,0,5.35);
 cyl('toilet pedestal',0,.28,0,.28,.32,.55,white,toilet);cyl('toilet bowl',0,.48,0,.43,.43,.25,white,toilet);
 const toiletSeat=cyl('toilet seat',0,.62,0,.45,.45,.07,dark,toilet);toiletSeat.scale.set(1,.18,1);
+const showerDrops=[];
+for(let i=0;i<18;i++){
+ const drop=sphere('shower water drop',-4.25+(Math.random()-.5)*.42,2.25-Math.random()*.9,4.78+(Math.random()-.5)*.42,.035,mat(0x8bdcff));
+ drop.visible=false;showerDrops.push(drop);
+}
+const toiletWater=new THREE.Mesh(new THREE.TorusGeometry(.19,.035,8,32),new THREE.MeshBasicMaterial({color:0x70cfff,transparent:true,opacity:0.0}));
+toiletWater.rotation.x=Math.PI/2;toiletWater.position.set(-1.75,.57,5.35);scene.add(toiletWater);
+let showerAnimation=false,toiletAnimation=false;
+
 box('toilet tank',0,.9,-.28,.68,.72,.28,white,toilet);scene.add(toilet);
 // Ліжко у спальні.
 const bed=new THREE.Group();bed.position.set(4.65,0,5.35);bed.scale.x=.85;scene.add(bed);
@@ -512,8 +521,8 @@ for(const [index,seatGroup] of diningChairs.entries()){
 const showerAim=box('shower interaction zone',-4.15,1.45,5.35,.85,1.5,.85,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
 const toiletAim=box('toilet interaction zone',-1.75,1.35,5.35,.85,1.35,.85,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
 const bedAim=box('bed interaction zone',4.65,1.35,4.15,1.1,1.4,.8,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
-target('Душ',showerAim,async()=>{if(!state.ate){hint('Спочатку закінчи святковий сніданок.');return}if(state.showered||sequenceBusy)return;sequenceBusy=true;hint('🚿 Ти приймаєш душ…');await fadeScreen(250);playWaterSound(2,false);await new Promise(r=>setTimeout(r,2000));state.showered=true;await revealScreen(350);objective('🚽 Тепер скористайся туалетом.');hint('Душ прийнято! Тепер іди до туалету.');sequenceBusy=false;});
-target('Туалет',toiletAim,async()=>{if(!state.showered){hint('Спочатку прийми душ.');return}if(state.usedToilet||sequenceBusy)return;sequenceBusy=true;hint('🚽 Зачекай мить…');await fadeScreen(250);playWaterSound(2,true);await new Promise(r=>setTimeout(r,2000));state.usedToilet=true;await revealScreen(350);objective('🛏️ Іди до ліжка у спальні та лягай спати.');hint('Готово! Тепер іди до ліжка.');sequenceBusy=false;});
+target('Душ',showerAim,async()=>{if(!state.ate){hint('Спочатку закінчи святковий сніданок.');return}if(state.showered||sequenceBusy)return;sequenceBusy=true;hint('🚿 Вода ллється — ти приймаєш душ…');showerAnimation=true;showerDrops.forEach(d=>d.visible=true);playWaterSound(3,false);const start=camera.position.clone();await tweenCamera([-4.55,1.7,4.15],[-.18,0,0],550);await new Promise(r=>setTimeout(r,2600));await tweenCamera([start.x,1.65,start.z],[camera.rotation.x,camera.rotation.y,0],550);showerAnimation=false;showerDrops.forEach(d=>d.visible=false);state.showered=true;objective('🚽 Тепер скористайся туалетом.');hint('Душ прийнято! Тепер іди до туалету.');sequenceBusy=false;});
+target('Туалет',toiletAim,async()=>{if(!state.showered){hint('Спочатку прийми душ.');return}if(state.usedToilet||sequenceBusy)return;sequenceBusy=true;hint('🚽 Ти користуєшся туалетом…');toiletAnimation=true;const start=camera.position.clone();await tweenCamera([-2.55,1.55,4.15],[0,0,0],500);toiletWater.material.opacity=.8;toiletWater.scale.setScalar(.25);playWaterSound(2.8,true);for(let i=0;i<12;i++){toiletWater.scale.setScalar(.25+i*.065);toiletWater.rotation.z+=.45;await new Promise(r=>setTimeout(r,130));}await new Promise(r=>setTimeout(r,500));toiletWater.material.opacity=0;toiletWater.scale.setScalar(1);await tweenCamera([start.x,1.65,start.z],[camera.rotation.x,camera.rotation.y,0],500);toiletAnimation=false;state.usedToilet=true;objective('🛏️ Іди до ліжка у спальні та лягай спати.');hint('Готово! Тепер іди до ліжка.');sequenceBusy=false;});
 target('Ліжко',bedAim,async()=>{if(!state.usedToilet){hint('Спочатку прийми душ, а потім скористайся туалетом.');return}if(state.slept||sequenceBusy)return;sequenceBusy=true;hint('🌙 Ти лягаєш спати…');await tweenCamera([4.65,1.02,4.55],[-.12,0,0],850);await tweenCamera([4.65,1.1,4.5],[.95,0,0],650);await fadeScreen(650);state.slept=true;objective('🌙 На добраніч! День завершено.');hint('День завершено!');await new Promise(r=>setTimeout(r,1200));finishGame();});
 const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,mugPlaced:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false,ate:false,showered:false,usedToilet:false,slept:false};
 function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візьми запальничку.');return}if(!state.cakePlaced){hint('Потрібен торт на столі.');return}const fl=flames[i];if(fl.visible)return;fl.visible=true;state.litCount++;lamp.intensity=state.litCount===1?1.2:2.8;warm.intensity=state.litCount===1?1.5:3.5;hint(state.litCount===1?'Перша свічка горить. Запали другу!':'Обидві свічки горять! Сідай на стілець.');if(state.litCount===2){objective('🍽️ Сідай на будь-який із трьох стільців і заверши сніданок.');scene.background=new THREE.Color(0x24172b);scene.fog.color.set(0x24172b)}}
@@ -597,6 +606,9 @@ ray.setFromCamera(new THREE.Vector2(0,0),camera);const hits=ray.intersectObjects
 hand.style.opacity=currentTarget?'1':'.65';
 if(currentTarget)hand.querySelector('small').textContent='ДІЯ';else hand.querySelector('small').textContent='ОБРАТИ';
 if(state.tapOpen){tapWater.rotation.z+=.02}
+if(showerAnimation){for(const d of showerDrops){d.position.y-=.055;if(d.position.y<.25){d.position.y=2.25;d.position.x=-4.25+(Math.random()-.5)*.42;d.position.z=4.78+(Math.random()-.5)*.42;}}}
+if(toiletAnimation){toiletWater.rotation.z+=.08;}
+
 snow.forEach((s,i)=>{if(s.visible){s.position.y+=Math.sin(Date.now()*.001+i)*.0008-.001;if(s.position.y<.45)s.position.y=1.9}});
 renderer.render(scene,camera)}
 function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))}
