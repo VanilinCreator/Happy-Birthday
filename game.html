@@ -359,7 +359,7 @@ for(const x of [-1.2,1.2]){
  sphere('pendant bulb',x,3.04,-1.4,.075,mat(0xffe5ae));
 }
 // Декор столу: серветка, тарілка та ваза
-box('table runner',0,1.04,-1.6,1.8,.018,.48,mat(0xead0df),table);
+box('table runner',0,1.031,-1.6,1.8,.012,.48,mat(0xead0df),table);
 cyl('serving plate',.82,1.055,-1.6,.22,.22,.025,white,table);
 const vase=cyl('flower vase',-.85,1.17,-1.6,.11,.15,.25,glass,table);
 for(let i=0;i<3;i++)sphere('table flowers',-.85+Math.cos(i*2.1)*.12,1.48,-1.6+Math.sin(i*2.1)*.1,.09,[pink,gold,mat(0xff9eb7)][i],table);
