@@ -134,7 +134,7 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
 #aimDot{position:absolute;left:50%;top:50%;width:8px;height:8px;border:1.5px solid white;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 5px #000,0 0 10px #fff8}
 #handButton{position:absolute;right:24px;bottom:calc(34px + env(safe-area-inset-bottom));width:76px;height:76px;border-radius:50%;border:1px solid #ffffff75;background:#241936dd;color:#fff;font-size:30px;pointer-events:auto;box-shadow:0 5px 24px #0009;touch-action:none}
 #handButton small{display:block;font-size:10px;font-weight:800;letter-spacing:.08em}
-#movePad{position:absolute;left:24px;bottom:calc(28px + env(safe-area-inset-bottom));width:124px;height:124px;border-radius:50%;border:1px solid #ffffff40;background:#ffffff13;pointer-events:auto;touch-action:none}
+#movePad{position:absolute;left:24px;bottom:calc(28px + env(safe-area-inset-bottom));width:124px;height:124px;border-radius:50%;border:1px solid #ffffff40;background:#ffffff13;pointer-events:auto;touch-action:none}#moveNub{pointer-events:none;touch-action:none;will-change:transform}
 #moveNub{position:absolute;width:52px;height:52px;left:35px;top:35px;border-radius:50%;background:#ffffff55;border:1px solid #ffffff88;box-shadow:0 3px 12px #0006}
 #lookHelp{position:absolute;right:18px;top:75px;color:#ffffffa8;font-size:11px;text-align:right}
 #heldItem{position:absolute;right:24px;bottom:125px;font-size:42px;filter:drop-shadow(0 3px 8px #000);pointer-events:none}
@@ -301,6 +301,100 @@ const candleA=cyl('candle one',-.2,1.42,-1.6,.035,.035,.3,mat(0xf5c7dc),table),c
 candleA.visible=false;candleB.visible=false;
 const flames=[];
 for(const c of [candleA,candleB]){const fl=sphere('flame',c.position.x,1.62,c.position.z,.07,mat(0xffb53d));fl.visible=false;flames.push(fl)}
+// Повноцінніше облаштування кухні: шафи, плита, витяжка, декор і зони зберігання
+const cabinetCream=mat(0xb9a6a0),tile=mat(0x81778c),steel=mat(0x737d89,.28,.8),blackGlass=mat(0x171923,.18,.35),woodLight=mat(0xb98259);
+function addWallCabinet(x,y,z,w=1.25){
+ const g=new THREE.Group();g.position.set(x,y,z);scene.add(g);
+ box('upper cabinet',0,0,0,w,.92,.48,cabinetCream,g);
+ box('upper cabinet door',0,0,.25,w*.94,.82,.035,cream,g);
+ box('upper cabinet handle',w*.32,0,.29,.035,.25,.035,gold,g);
+ box('cabinet underside',0,-.48,0,w,.05,.5,wood2,g);
+ return g;
+}
+function addDrawerUnit(x,z,w=1.1){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ box('kitchen base cabinet',0,.48,0,w,.96,.78,cabinetCream,g);
+ for(let i=0;i<3;i++){
+  const y=.78-i*.29;
+  box('drawer front',0,y,.405,w*.92,.25,.035,cream,g);
+  box('drawer pull',0,y,.44,.22,.035,.035,steel,g);
+ }
+ box('cabinet toe kick',0,.08,.35,w*.94,.13,.12,wood,g);
+ return g;
+}
+// Фартух із плитки на стіні за робочою поверхнею
+for(let x=2.75;x<=5.05;x+=.42)for(let y=2.35;y<=3.15;y+=.34){
+ const t=box('backsplash tile',x,y,-1.78,.39,.31,.035,tile);t.material=tile;
+}
+// Верхні кухонні шафи над стільницею
+addWallCabinet(3.25,3.25,-1.55,1.05);
+addWallCabinet(4.48,3.25,-1.55,1.05);
+// Додаткова секція нижніх шухляд біля робочої зони
+addDrawerUnit(5.15,-1.2,.7);
+// Варильна поверхня на стільниці
+box('stove glass surface',3.85,2.01,-1.17,1.05,.045,.72,blackGlass);
+for(const [x,z] of [[3.52,-1.4],[4.17,-1.4],[3.52,-.94],[4.17,-.94]]){
+ cyl('burner ring',x,2.045,z,.15,.15,.025,steel);
+ cyl('burner center',x,2.065,z,.07,.07,.018,dark);
+}
+// Духовка під плитою
+box('oven body',3.85,.78,-.72,.95,.72,.12,dark);
+box('oven glass door',3.85,.76,-.645,.76,.42,.025,blackGlass);
+box('oven handle',3.85,1.04,-.59,.62,.045,.06,steel);
+for(let i=0;i<3;i++)cyl('oven control',3.55+i*.3,1.22,-.62,.055,.055,.045,metal);
+// Витяжка та повітропровід
+box('extractor chimney',3.85,3.48,-1.65,.42,.65,.35,steel);
+box('extractor hood',3.85,3.12,-1.42,1.35,.18,.7,steel);
+for(let i=0;i<4;i++)box('hood vent',3.42+i*.28,3.015,-1.2,.12,.018,.28,dark);
+// Полички зі спеціями
+box('spice shelf',1.75,2.65,-5.72,2.2,.09,.32,wood2);
+for(let i=0;i<5;i++){
+ const jar=cyl('spice jar',.95+i*.38,2.88,-5.62,.075,.075,.34,[pink,gold,cream,woodLight,steel][i]);
+ cyl('spice lid',.95+i*.38,3.06,-5.62,.08,.08,.045,metal);
+}
+// Холодильник: магніти та верхня полиця
+box('fridge top trim',-4.2,2.56,-3.6,1.32,.09,1.13,metal);
+for(let i=0;i<3;i++){
+ const magnet=sphere('fridge magnet',-4.55+i*.28,1.8,.0,.07,[pink,gold,woodLight][i],fridge);
+ magnet.position.z=.59;
+}
+// Стільниця-підвіконня, квітка та горщик
+box('window sill',-3.2,1.62,-5.65,2.35,.12,.42,wood2);
+cyl('flower pot',-3.2,1.82,-5.65,.16,.12,.28,pink);
+for(let i=0;i<5;i++)sphere('plant leaf',-3.2+Math.cos(i*1.25)*.16,2.12+Math.sin(i)*.05,-5.65+Math.sin(i*1.25)*.12,.12,mat(0x5e9b69));
+// Підвісні світильники над столом
+for(const x of [-1.2,1.2]){
+ cyl('pendant cord',x,3.55,-1.4,.018,.018,.7,dark);
+ const shade=cyl('pendant shade',x,3.18,-1.4,.2,.34,.22,gold);
+ sphere('pendant bulb',x,3.04,-1.4,.075,mat(0xffe5ae));
+}
+// Декор столу: серветка, тарілка та ваза
+box('table runner',0,1.04,-1.6,1.8,.018,.48,mat(0xead0df),table);
+cyl('serving plate',.82,1.055,-1.6,.22,.22,.025,white,table);
+const vase=cyl('flower vase',-.85,1.17,-1.6,.11,.15,.25,glass,table);
+for(let i=0;i<3;i++)sphere('table flowers',-.85+Math.cos(i*2.1)*.12,1.48,-1.6+Math.sin(i*2.1)*.1,.09,[pink,gold,mat(0xff9eb7)][i],table);
+// Додаткові стільці біля обіднього столу
+for(const [x,z,rot] of [[-1.9,1.25,Math.PI/2],[1.9,1.25,-Math.PI/2]]){
+ const cg=new THREE.Group();cg.position.set(x,0,z);cg.rotation.y=rot;scene.add(cg);
+ box('dining chair seat',0,.55,0,.72,.12,.7,wood2,cg);
+ for(const xx of [-.28,.28])for(const zz of [-.27,.27])box('dining chair leg',xx,.27,zz,.08,.54,.08,wood,cg);
+ box('dining chair back',0,1.02,-.3,.72,.86,.1,wood2,cg);
+}
+// Кошик, смітник і килимок біля мийки
+const bin=cyl('kitchen bin',5.15,.48,-3.4,.28,.34,.9,steel);
+cyl('bin lid',5.15,.96,-3.4,.3,.3,.08,dark);
+box('sink mat',3.9,.012,-2.35,1.8,.025,1.1,mat(0x51445d));
+// Додаткові настінні полиці з посудом
+box('dish shelf',-1.2,2.8,-5.72,1.65,.08,.35,wood2);
+for(let i=0;i<3;i++){
+ cyl('stacked bowl',-1.75+i*.52,2.98,-5.62,.13,.13,.12,cream);
+ cyl('bowl rim',-1.75+i*.52,3.045,-5.62,.13,.13,.025,gold);
+}
+// Декоративні плінтуси та стельовий карниз
+box('back wall baseboard',0,.12,-5.86,11.7,.18,.08,wood2);
+box('left wall baseboard',-5.86,.12,0,.08,.18,11.7,wood2);
+box('right wall baseboard',5.86,.12,0,.08,.18,11.7,wood2);
+
 // Small snow particles in fridge area
 const snow=[];
 for(let i=0;i<24;i++){const p=sphere('snow',-4.2+Math.random()*.9,Math.random()*2.2-3.6, -2.85+Math.random()*.35,.018,mat(0xcdf5ff));p.visible=false;snow.push(p)}
@@ -323,7 +417,7 @@ function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)doc
 function carry(v){heldEl.textContent=v}
 function hint(t){hintEl.textContent=t;taskEl.textContent=t}
 let yaw=0,pitch=0,moveX=0,moveY=0,dragging=false,lastX=0,lastY=0,lookTouch=false;
-const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+const clock=new THREE.Clock();const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 function look(dx,dy){yaw-=dx*.004;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.003));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
 canvas.addEventListener('click',()=>{if(innerWidth>760&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas)look(e.movementX,e.movementY)});
@@ -334,15 +428,37 @@ function releaseLookTouch(e){if(lookTouchId===null)return;for(const t of e.chang
 canvas.addEventListener('touchend',releaseLookTouch,{passive:true});
 canvas.addEventListener('touchcancel',releaseLookTouch,{passive:true});
 const pad=document.getElementById('movePad'),nub=document.getElementById('moveNub');let padId=null;
-pad.addEventListener('pointerdown',e=>{padId=e.pointerId;pad.setPointerCapture(padId);movePad(e)});
-pad.addEventListener('pointermove',e=>{if(e.pointerId===padId)movePad(e)});
-function movePad(e){const r=pad.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=e.clientX-cx,dy=e.clientY-cy;const max=34,len=Math.hypot(dx,dy)||1;if(len>max){dx=dx/len*max;dy=dy/len*max}moveX=dx/max;moveY=dy/max;nub.style.transform='translate('+dx+'px,'+dy+'px)'}
-function resetPad(){padId=null;moveX=moveY=0;nub.style.transform='translate(0,0)'}
-pad.addEventListener('pointerup',resetPad);pad.addEventListener('pointercancel',resetPad);
+pad.addEventListener('pointerdown',e=>{e.preventDefault();if(padId!==null)return;padId=e.pointerId;pad.setPointerCapture(e.pointerId);movePad(e)});
+pad.addEventListener('pointermove',e=>{if(e.pointerId===padId){e.preventDefault();movePad(e)}});
+function movePad(e){
+ const r=pad.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+ let dx=e.clientX-cx,dy=e.clientY-cy;
+ const max=Math.min(r.width,r.height)*.34,len=Math.hypot(dx,dy);
+ if(len>max){dx=dx/len*max;dy=dy/len*max}
+ const dead=5;
+ moveX=Math.abs(dx)<dead?0:dx/max;
+ moveY=Math.abs(dy)<dead?0:dy/max;
+ nub.style.transform='translate('+dx+'px,'+dy+'px)';
+}
+function resetPad(e){
+ if(e&&padId!==null&&e.pointerId!==padId)return;
+ if(padId!==null&&pad.hasPointerCapture(padId))pad.releasePointerCapture(padId);
+ padId=null;moveX=0;moveY=0;nub.style.transform='translate(0,0)';
+}
+pad.addEventListener('pointerup',resetPad);pad.addEventListener('pointercancel',resetPad);pad.addEventListener('lostpointercapture',resetPad);
 hand.addEventListener('click',interact);
 const ray=new THREE.Raycaster();let currentTarget=null;
 function interact(){if(!currentTarget){hint('Наведи центральну точку на предмет ближче до себе.');return}currentTarget.userData.action?.()}
-function animate(){requestAnimationFrame(animate);const forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-moveY;const strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;const dir=new THREE.Vector3(strafe,0,-forward);if(dir.length()>0){dir.normalize().applyAxisAngle(new THREE.Vector3(0,1,0),yaw);camera.position.addScaledVector(dir,.055)}camera.position.x=Math.max(-5.2,Math.min(5.2,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(5.2,camera.position.z));camera.position.y=1.65;
+function animate(){requestAnimationFrame(animate);
+ const forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-moveY;
+ const strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
+ const dir=new THREE.Vector3(strafe,0,-forward);
+ if(dir.lengthSq()>0.0025){
+  dir.clampLength(0,1).applyAxisAngle(new THREE.Vector3(0,1,0),yaw);
+  const delta=Math.min(clock.getDelta(),.05);
+  camera.position.addScaledVector(dir,delta*3.4);
+ }else{clock.getDelta()}
+ camera.position.x=Math.max(-5.2,Math.min(5.2,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(5.2,camera.position.z));camera.position.y=1.65;
 ray.setFromCamera(new THREE.Vector2(0,0),camera);const hits=ray.intersectObjects(targets,true);currentTarget=null;for(const h of hits){let o=h.object;while(o&&!o.userData.action)o=o.parent;if(o&&o.userData.action&&h.distance<3.2){currentTarget=o;break}}
 hand.style.opacity=currentTarget?'1':'.65';
 if(currentTarget)hand.querySelector('small').textContent='ДІЯ';else hand.querySelector('small').textContent='ОБРАТИ';
