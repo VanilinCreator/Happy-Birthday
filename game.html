@@ -208,7 +208,7 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0x100d1c);scene.f
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,80);camera.position.set(0,1.65,5);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 scene.add(new THREE.HemisphereLight(0xbacbff,0x453047,1.1));
- const flashlight=new THREE.SpotLight(0xfff0cf,0,14,Math.PI/7,.45,1.2);flashlight.position.set(0,0,0);flashlight.target.position.set(0,0,-8);camera.add(flashlight);camera.add(flashlight.target);let flashlightOn=false;
+ const flashlight=new THREE.SpotLight(0xfff0cf,0,14,Math.PI/7,.45,1.2);flashlight.position.set(0,0,0);flashlight.target.position.set(0,0,-8);scene.add(flashlight);scene.add(flashlight.target);let flashlightOn=false;
  function toggleFlashlight(){flashlightOn=!flashlightOn;flashlight.intensity=flashlightOn?32:0;flashlightButton.classList.toggle('active',flashlightOn);flashlightButton.setAttribute('aria-pressed',String(flashlightOn));flashlightButton.setAttribute('aria-label',flashlightOn?'Вимкнути ліхтарик':'Увімкнути ліхтарик')}
 const lamp=new THREE.PointLight(0xffc98b,0,12);lamp.position.set(0,3.1,0);scene.add(lamp);
 const warm=new THREE.PointLight(0xffb85c,0,5);warm.position.set(0,1.5,-2.5);scene.add(warm);
@@ -248,19 +248,20 @@ cake.visible=false;
 const table=new THREE.Group();table.position.set(0,0,-1.6);scene.add(table);
 box('table top',0,.95,0,2.5,.16,1.5,wood2,table);
 for(const x of [-1,1])for(const z of [-.52,.52])box('table leg',x,.45,z,.14,.9,.14,wood,table);
-const mug=new THREE.Group();mug.position.set(4.8,.98,-1.9);mug.scale.setScalar(.8);scene.add(mug);
+const mug=new THREE.Group();mug.position.set(3.65,.98,-2.5);mug.scale.setScalar(.8);scene.add(mug);
 cyl('mug cup',0,.18,0,.16,.19,.36,white,mug);
 const handleRing=new THREE.Mesh(new THREE.TorusGeometry(.12,.035,8,20),white);handleRing.position.set(.16,.2,0);mug.add(handleRing);
-const tea=new THREE.Group();tea.position.set(5.18,.42,-2.5);scene.add(tea);
+const tea=new THREE.Group();tea.position.set(4.55,.42,-2.5);scene.add(tea);
 box('tea sachet',0,0,0,.13,.18,.025,mat(0xe9d7a9),tea);box('tea label',0,.03,.02,.07,.05,.01,mat(0x9a425c),tea);tea.visible=false;
-const kettle=new THREE.Group();kettle.position.set(4.82,.98,-2.65);kettle.scale.setScalar(.72);scene.add(kettle);
+const kettle=new THREE.Group();kettle.position.set(4.05,.98,-2.5);kettle.scale.setScalar(.72);scene.add(kettle);
+const kettleStation= new THREE.Group();kettleStation.position.set(4.05,.98,-2.5);scene.add(kettleStation);cyl('kettle heating base',0,.035,0,.34,.34,.07,dark,kettleStation);cyl('heating ring',0,.075,0,.25,.25,.018,gold,kettleStation);
 cyl('kettle body',0,.55,0,.38,.4,.65,metal,kettle);cyl('kettle lid',0,.9,0,.28,.28,.08,dark,kettle);sphere('kettle knob',0,.99,0,.08,dark,kettle);
 const spout=cyl('kettle spout',.38,.73,-.02,.08,.12,.4,metal,kettle);spout.rotation.z=-.9;
 const kettleHandle=new THREE.Mesh(new THREE.TorusGeometry(.27,.045,8,20,Math.PI),dark);kettleHandle.position.set(-.28,.75,0);kettle.add(kettleHandle);
-const steamGroup=new THREE.Group();scene.add(steamGroup);steamGroup.position.set(4.82,1.78,-2.65);
+const steamGroup=new THREE.Group();scene.add(steamGroup);steamGroup.position.set(4.05,1.78,-2.5);
 for(let i=0;i<7;i++){const s=sphere('steam',Math.sin(i)*.12,i*.16,Math.cos(i)*.1,.045,mat(0xffffff));s.material.transparent=true;s.material.opacity=.0;steamGroup.add(s)}
 // Cabinet and sink
-const cabinet=new THREE.Group();cabinet.position.set(5.05,0,-2.5);cabinet.rotation.y=-Math.PI/2;scene.add(cabinet);
+const cabinet=new THREE.Group();cabinet.position.set(5.05,0,-2.5);cabinet.rotation.y=0;scene.add(cabinet);
 // Нижня тумба з вільною передньою частиною та порожнім внутрішнім об'ємом.
 box('cabinet left side',-.75,.45,0,.1,.9,.8,wood,cabinet);
 box('cabinet right side',.75,.45,0,.1,.9,.8,wood,cabinet);
@@ -327,6 +328,7 @@ for(const [x,z] of [[.67,-5.48],[1.32,-5.48],[.67,-5.02],[1.32,-5.02]]){
  cyl('burner center',x,1.035,z,.07,.07,.018,dark);
 }
 box('oven body',1.0,.53,-4.78,.95,.86,.12,dark);
+box('stove left side',.47,.55,-4.98,.12,1.02,.72,cabinetCream);box('stove right side',1.53,.55,-4.98,.12,1.02,.72,cabinetCream);box('stove lower plinth',1.0,.055,-4.98,1.18,.11,.78,wood);
 box('oven glass door',1.0,.53,-4.705,.76,.48,.025,blackGlass);
 box('oven handle',1.0,.82,-4.65,.62,.045,.06,steel);
 for(let i=0;i<3;i++)cyl('oven control',.7+i*.3,1.03,-4.68,.055,.055,.045,metal);
@@ -409,12 +411,11 @@ const clock=new THREE.Clock();const keys={};addEventListener('keydown',e=>{keys[
 function look(dx,dy){yaw-=dx*.004;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.003));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
 canvas.addEventListener('click',()=>{if(innerWidth>760&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas)look(e.movementX,e.movementY)});
-let lookTouchId=null;
-canvas.addEventListener('touchstart',e=>{for(const t of e.changedTouches){if(t.clientX>innerWidth*.32&&lookTouchId===null){lookTouchId=t.identifier;lastX=t.clientX;lastY=t.clientY;lookTouch=true;break}}},{passive:true});
-canvas.addEventListener('touchmove',e=>{if(lookTouchId===null)return;const t=Array.from(e.touches).find(v=>v.identifier===lookTouchId);if(!t)return;const dx=t.clientX-lastX,dy=t.clientY-lastY;lastX=t.clientX;lastY=t.clientY;look(dx,dy);e.preventDefault()},{passive:false});
-function releaseLookTouch(e){if(lookTouchId===null)return;for(const t of e.changedTouches){if(t.identifier===lookTouchId){lookTouchId=null;lookTouch=false;break}}}
-canvas.addEventListener('touchend',releaseLookTouch,{passive:true});
-canvas.addEventListener('touchcancel',releaseLookTouch,{passive:true});
+let lookPointerId=null;
+canvas.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'&&e.clientX>innerWidth*.32){lookPointerId=e.pointerId;lastX=e.clientX;lastY=e.clientY;try{canvas.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault()}},{passive:false});
+canvas.addEventListener('pointermove',e=>{if(lookPointerId!==e.pointerId)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;look(dx,dy);e.preventDefault()},{passive:false});
+function releaseLookPointer(e){if(lookPointerId===e.pointerId){lookPointerId=null;lookTouch=false}}
+canvas.addEventListener('pointerup',releaseLookPointer);canvas.addEventListener('pointercancel',releaseLookPointer);
 const pad=document.getElementById('movePad'),nub=document.getElementById('moveNub');let padId=null;
 function movePad(e){
  const r=pad.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
@@ -441,6 +442,7 @@ hand.addEventListener('click',interact);
 const ray=new THREE.Raycaster();let currentTarget=null;
 function interact(){if(!currentTarget){hint('Наведи центральну точку на предмет ближче до себе.');return}currentTarget.userData.action?.()}
 function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
+ if(flashlightOn){const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);flashlight.position.copy(camera.position);flashlight.target.position.copy(camera.position).addScaledVector(dir,8)}
  const forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-moveY;
  const strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
  const dir=new THREE.Vector3(strafe,0,-forward);
