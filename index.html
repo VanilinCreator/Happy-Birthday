@@ -89,9 +89,30 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
 @media(max-width:420px){.intro-content{gap:10px;padding:14px}.intro-cake-wrap{height:215px;width:min(90vw,320px)}.cake-display{transform:scale(.88);transform-origin:bottom center}.candle{top:33px}.intro-title{letter-spacing:.1em}.lighter{padding:10px 16px}}
 @media(prefers-reduced-motion:reduce){.candle .flame,.lighter.used .lighter-spark{animation:none}.intro-scene:before{transition:none}}
 
+
+/* Корекція: одна тарілка під тортом, верх — кремова глазур */
+.cake-top{left:16%;right:16%;bottom:112px;height:31px;border:0;border-radius:50% 50% 12px 12px;background:linear-gradient(180deg,#fff0f5 0%,#ffd8e8 65%,#efa9ca 100%);box-shadow:inset 0 -5px 0 #eaa0c2}
+.cake-top:after{content:"";position:absolute;left:8%;right:8%;bottom:-9px;height:17px;background:radial-gradient(ellipse at 50% 0%,#ffe8f1 0 65%,transparent 70%);border-radius:0 0 50% 50%}
+.cake-plate{z-index:0}
+.cake-bottom{z-index:1}
+.cake-top{z-index:2}
+/* Більш впізнавана металева кишенькова запальничка */
+.lighter{width:94px;height:118px;min-width:0;padding:0;display:block;border:1px solid #9da0ad;border-radius:13px 13px 17px 17px;background:linear-gradient(100deg,#343741 0%,#b7bac4 13%,#555966 26%,#171a22 54%,#8c909b 82%,#292c35 100%);box-shadow:0 12px 28px #000c,inset 0 2px 3px #ffffff8a,inset 0 -5px 9px #0009;transform:perspective(300px) rotateX(3deg)}
+.lighter:hover{transform:perspective(300px) rotateX(3deg) translateY(-3px);box-shadow:0 15px 32px #000c,0 0 18px #ffb34b44,inset 0 2px 3px #ffffff8a}
+.lighter-cap{position:absolute;left:9px;right:9px;top:-13px;height:27px;border:1px solid #c2c4cc;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,#d8d9df,#6d707b 48%,#292c35);box-shadow:inset 0 2px 3px #fff9,0 3px 4px #0009;transform-origin:8px 100%;transition:transform .25s}
+.lighter-hinge{position:absolute;right:6px;top:9px;width:13px;height:7px;border-radius:3px;background:linear-gradient(#e4e5e9,#656a75);box-shadow:0 1px 2px #000}
+.lighter-striker{position:absolute;top:8px;left:50%;width:22px;height:13px;transform:translateX(-50%);border:2px solid #d5d6dc;border-radius:4px 4px 2px 2px;background:repeating-linear-gradient(90deg,#343741 0 2px,#c6c8d0 2px 3px);box-shadow:0 0 3px #000}
+.lighter-case{position:absolute;left:8px;right:8px;top:28px;bottom:9px;border-radius:7px 7px 11px 11px;background:linear-gradient(100deg,#171a22,#626673 20%,#22252e 47%,#777b86 80%,#242731);box-shadow:inset 0 1px 3px #fff7,inset 0 -4px 7px #0009}
+.lighter-emblem{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-family:Georgia,serif;font-size:26px;font-weight:bold;color:#d9dbe2;text-shadow:0 1px 2px #000,0 -1px 1px #fff}
+.lighter-label{position:absolute;left:0;right:0;bottom:15px;font-size:8px;letter-spacing:.09em;color:#f4e8c8;text-shadow:0 1px 2px #000}
+.lighter-spark{z-index:5;top:-35px}
+.lighter.used .lighter-cap{transform:rotate(-68deg) translate(-5px,-2px)}
+.lighter.used .lighter-spark{top:-45px}
+@media(max-width:420px){.lighter{width:84px;height:108px}.lighter-case{left:7px;right:7px}}
+
 </style>
 </head>
-<body class="intro-active"><div class="intro-scene" id="introScene"><div class="intro-content"><div class="intro-title">У кімнаті зовсім темно...</div><div class="intro-cake-wrap"><div class="cake-display" aria-label="Святковий торт із двома свічками"><div class="cake-plate"></div><div class="cake-bottom"><span class="icing-drip"></span></div><div class="cake-top"></div><button class="candle c3" id="candle3" aria-label="Запалити свічку 3">3<span class="wick"></span><span class="flame">✦</span></button><button class="candle c7" id="candle7" aria-label="Запалити свічку 7">7<span class="wick"></span><span class="flame">✦</span></button></div></div><button class="lighter" id="lighter" aria-label="Увімкнути запальничку"><span class="lighter-spark">✦</span><span class="lighter-body">▰</span><span class="lighter-label">ЗАПАЛЮВАЧ</span></button><div class="intro-hint" id="introHint">Спочатку натисни на запальничку.</div></div></div><div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
+<body class="intro-active"><div class="intro-scene" id="introScene"><div class="intro-content"><div class="intro-title">У кімнаті зовсім темно...</div><div class="intro-cake-wrap"><div class="cake-display" aria-label="Святковий торт із двома свічками"><div class="cake-plate"></div><div class="cake-bottom"><span class="icing-drip"></span></div><div class="cake-top"></div><button class="candle c3" id="candle3" aria-label="Запалити свічку 3">3<span class="wick"></span><span class="flame">✦</span></button><button class="candle c7" id="candle7" aria-label="Запалити свічку 7">7<span class="wick"></span><span class="flame">✦</span></button></div></div><button class="lighter" id="lighter" aria-label="Увімкнути запальничку"><span class="lighter-spark">✦</span><span class="lighter-cap"></span><span class="lighter-hinge"></span><span class="lighter-striker"></span><span class="lighter-case"><span class="lighter-emblem">V</span></span><span class="lighter-label">ЗАПАЛЮВАЧ</span></button><div class="intro-hint" id="introHint">Спочатку натисни на запальничку.</div></div></div><div class="stars"></div><nav class="side-stars" id="sideStars" aria-label="Святкові зірочки-посилання"></nav>
 <main><section class="card">
 <div class="eyebrow">Сьогодні особливий день ✨</div>
 <div class="cake" aria-label="Святковий торт">🎂</div>
