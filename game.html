@@ -142,7 +142,8 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
 #gameStart{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(#080711cc,#080711eF);z-index:3;padding:24px;text-align:center}
 #gameStartCard{max-width:440px;padding:28px;border:1px solid #ffffff30;border-radius:24px;background:#211832ed;box-shadow:0 20px 80px #000b}
 #gameStart h2{font-size:clamp(1.6rem,6vw,2.4rem);margin:0 0 12px;color:#ffd9aa}
-#gameStart p{line-height:1.6;color:#e8dff1}\n#gameError{display:none;margin:14px 0 0;padding:12px;border:1px solid #ff8b8b88;border-radius:12px;background:#5b172dcc;color:#ffe1e1;font-size:13px;line-height:1.5;overflow-wrap:anywhere;text-align:left}
+#gameStart p{line-height:1.6;color:#e8dff1}
+#gameError{display:none;margin:14px 0 0;padding:12px;border:1px solid #ff8b8b88;border-radius:12px;background:#5b172dcc;color:#ffe1e1;font-size:13px;line-height:1.5;overflow-wrap:anywhere;text-align:left}
 #startGame{border:0;border-radius:999px;padding:14px 25px;font-weight:800;font-size:1rem;background:linear-gradient(100deg,#ffb56b,#ff79b7);color:#32152e}
 #gameRoot:not(.playing) #gameCanvas{visibility:hidden}
 #gameRoot:not(.playing) #gameHud>*:not(#gameStart){visibility:hidden}
@@ -462,7 +463,10 @@ addEventListener('resize',resize);
   start.textContent='Спробувати ще раз';
   const errorName=err?.name||'Помилка';
   const errorMessage=err?.message||String(err)||'невідома помилка';
-  const diagnostic='Збій на етапі «'+bootStage+'». '+errorName+': '+errorMessage+'. Надішли цей текст розробнику.';\n   hintEl.textContent=diagnostic;\n   errorEl.textContent=diagnostic;\n   errorEl.style.display='block';
+  const diagnostic='Збій на етапі «'+bootStage+'». '+errorName+': '+errorMessage+'. Надішли цей текст розробнику.';
+   hintEl.textContent=diagnostic;
+   errorEl.textContent=diagnostic;
+   errorEl.style.display='block';
   birthdayGameBoot=null;
  }
 }
