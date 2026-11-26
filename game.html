@@ -483,7 +483,7 @@ function tweenCamera(toPos,toRot,duration=900){
   requestAnimationFrame(step);
  });
 }
-настінні вимикачіtarget('Дверцята холодильника',fridgeDoor,()=>{if(!state.fridgeOpen){state.fridgeOpen=true;fridgeDoor.rotation.y=-1.65;fridgeGlow.intensity=2.5;cake.visible=true;snow.forEach(s=>s.visible=true);hint('Холодильник відкрито. Торт на внутрішній полиці.')}else if(!state.cakeTaken){hint('Спочатку дістань торт із полиці.')}else{state.fridgeOpen=false;fridgeDoor.rotation.y=0;fridgeGlow.intensity=0;snow.forEach(s=>s.visible=false);hint('Холодильник зачинено.')}});
+target('Дверцята холодильника',fridgeDoor,()=>{if(!state.fridgeOpen){state.fridgeOpen=true;fridgeDoor.rotation.y=-1.65;fridgeGlow.intensity=2.5;cake.visible=true;snow.forEach(s=>s.visible=true);hint('Холодильник відкрито. Торт на внутрішній полиці.')}else if(!state.cakeTaken){hint('Спочатку дістань торт із полиці.')}else{state.fridgeOpen=false;fridgeDoor.rotation.y=0;fridgeGlow.intensity=0;snow.forEach(s=>s.visible=false);hint('Холодильник зачинено.')}});
 target('Торт',cake,()=>{if(!state.fridgeOpen){hint('Спочатку відкрий холодильник.');return}if(state.cakeTaken){hint('Торт уже в тебе.');return}state.cakeTaken=true;cake.visible=false;carry('🎂');hint('Торт у руках. Підійди до столу та постав його.');});
 target('Місце для торта',table.children[0],()=>{if(!state.cakeTaken){hint('Спочатку принеси торт.');return}state.cakePlaced=true;state.cakeTaken=false;carry('');objective('🍵 Приготуй чай: знайди пакетик, набери воду в чайник і закип’яти її.');cakeOnTable=new THREE.Group();cakeOnTable.position.set(0,1.08,-1.6);scene.add(cakeOnTable);cyl('birthday cake base',0,.08,0,.48,.5,.16,mat(0xf3c8dc),cakeOnTable);cyl('birthday cake top',0,.2,0,.44,.44,.12,mat(0xffddeb),cakeOnTable);for(let i=0;i<2;i++){const cc=cyl('plain candle',-.12+i*.24,.36,0,.035,.035,.22,mat(0xf4c6dc),cakeOnTable);cc.userData.candleIndex=i;target('Свічка',cc,()=>lightCandle(i))}hint('Торт на столі! Тепер приготуй чай.');});
 target('Дверцята тумби',cabDoor,()=>{state.cabinetOpen=!state.cabinetOpen;cabDoor.rotation.y=state.cabinetOpen?-1.35:0;tea.visible=state.cabinetOpen&&!state.teaTaken;hint(state.cabinetOpen?'Тумба відкрита. Пакетик лежить усередині.':'Тумбу зачинено.')});
@@ -547,7 +547,7 @@ canvas.addEventListener('touchmove',e=>{for(const t of e.changedTouches)if(t.ide
 function endLook(e){for(const t of e.changedTouches)if(t.identifier===lookTouchId)lookTouchId=null}
 canvas.addEventListener('touchend',endLook,{passive:true});canvas.addEventListener('touchcancel',endLook,{passive:true});
 window.addEventListener('blur',stopMove);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMove()});
-hand.addEventListener('click',interact);flashlightButton.addEventListener('click',toggleFlashlight);
+hand.addEventListener('click',interact);
 const ray=new THREE.Raycaster();let currentTarget=null;
 function interact(){if(!currentTarget){hint('Наведи центральну точку на предмет ближче до себе.');return}currentTarget.userData.action?.()}
 function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
