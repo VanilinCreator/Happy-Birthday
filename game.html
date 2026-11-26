@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#160d2b">
+<title>Happy Birthday — Гра 🎂</title>
+<style>
+
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#fff;background:radial-gradient(ellipse at 50% 0%,#573080 0%,#24143e 42%,#100b20 100%);overflow-x:hidden}.stars{position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 20% 30%,#fff9 50%,transparent 100%),radial-gradient(1px 1px at 70% 20%,#fff9 50%,transparent 100%),radial-gradient(2px 2px at 85% 65%,#fff8 50%,transparent 100%),radial-gradient(1px 1px at 35% 80%,#fff8 50%,transparent 100%);background-size:260px 240px;animation:twinkle 5s ease-in-out infinite alternate}@keyframes twinkle{to{opacity:.35}}main{position:relative;z-index:1;min-height:100vh;display:grid;place-items:center;padding:32px 18px}.card{width:min(720px,100%);padding:clamp(28px,6vw,58px);text-align:center;border:1px solid #ffffff25;border-radius:30px;background:#ffffff0d;box-shadow:0 25px 90px #0006;backdrop-filter:blur(14px)}.eyebrow{letter-spacing:.22em;text-transform:uppercase;font-size:.76rem;color:#e3c7ff}.cake{font-size:clamp(76px,15vw,118px);filter:drop-shadow(0 12px 24px #ff9bca55);animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-12px) rotate(2deg)}}h1{font-size:clamp(2.6rem,9vw,5.3rem);line-height:1.02;margin:18px 0;background:linear-gradient(90deg,#ffe2a8,#ff9ed1,#c8a7ff);color:transparent;background-clip:text}.subtitle{font-size:clamp(1rem,3vw,1.2rem);line-height:1.7;color:#eee2fa;max-width:530px;margin:0 auto 28px}.name{display:inline-block;color:#ffd5a1;font-weight:800}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.btn{border:0;border-radius:999px;padding:14px 23px;font-size:1rem;font-weight:750;cursor:pointer;transition:transform .2s,filter .2s}.btn:hover{transform:translateY(-3px);filter:brightness(1.1)}.primary{background:linear-gradient(100deg,#ffb56b,#ff79b7);color:#32152e;box-shadow:0 8px 28px #ff79b744}.secondary{background:#ffffff16;color:white;border:1px solid #ffffff35}.message{display:none}
+.letter-scene{position:fixed;inset:0;z-index:20;display:none;place-items:center;padding:20px;background:#100820b8;backdrop-filter:blur(7px);perspective:1000px}
+.letter-scene.active{display:grid}
+.envelope{position:absolute;width:min(310px,75vw);height:205px;border-radius:12px;background:linear-gradient(145deg,#ffb6d7,#d879ad);box-shadow:0 22px 65px #0008;transform:translate(120vw,35vh) rotate(22deg);overflow:visible}
+.letter-scene.fly .envelope{animation:envelopeFly 1s cubic-bezier(.2,.8,.25,1) forwards}
+.envelope:before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,#ffd4e7,#e990bd);clip-path:polygon(0 0,50% 58%,100% 0);transform-origin:top;z-index:3}
+.envelope:after{content:"";position:absolute;inset:0;background:linear-gradient(35deg,#d86fa6,#f6a9cb);clip-path:polygon(0 100%,50% 48%,100% 100%);z-index:4}
+.envelope .seal{position:absolute;z-index:5;left:50%;top:54%;transform:translate(-50%,-50%);font-size:38px;filter:drop-shadow(0 3px 5px #9a386b)}
+.letter-scene.burst .envelope{animation:envelopeBurst .65s ease-in forwards}
+.letter-note{position:relative;z-index:6;width:min(490px,90vw);padding:38px 30px 30px;border-radius:8px;background:linear-gradient(145deg,#fff8e9,#ffe9f2);color:#63365a;text-align:center;box-shadow:0 20px 70px #0009;opacity:0;transform:translateY(70px) scale(.45) rotate(-8deg);line-height:1.8}
+.letter-note h2{margin:0 0 15px;font-size:clamp(1.5rem,5vw,2.1rem);color:#b54d88}
+.letter-note p{margin:0;font-size:clamp(1rem,3vw,1.15rem);font-weight:650}
+.letter-scene.reveal .letter-note{animation:noteReveal .8s cubic-bezier(.17,.89,.32,1.25) forwards}
+.letter-scene.closing .letter-note{transform-origin:center;animation:noteFlyAway .85s ease-in forwards;pointer-events:none}
+@keyframes noteFlyAway{0%{opacity:1;transform:translate(0,0) rotate(0) scale(1)}18%{transform:translate(-5px,-5px) rotate(-3deg) scale(1.01)}35%{transform:translate(7px,2px) rotate(4deg) scale(1)}52%{transform:translate(-8px,-2px) rotate(-5deg) scale(.98)}100%{opacity:0;transform:translate(115vw,-35vh) rotate(28deg) scale(.55)}}
+.letter-close{margin-top:22px;border:0;border-radius:999px;padding:10px 22px;background:linear-gradient(100deg,#ffb56b,#ff79b7);color:#32152e;font-weight:800;font-size:.95rem;cursor:pointer}
+@keyframes envelopeFly{0%{transform:translate(120vw,35vh) rotate(22deg)}75%{transform:translate(-4vw,-2vh) rotate(-5deg)}100%{transform:translate(0,0) rotate(0)}}
+@keyframes envelopeBurst{0%{transform:scale(1);opacity:1}35%{transform:scale(1.18) rotate(8deg)}100%{transform:scale(.15) rotate(-35deg);opacity:0;filter:blur(8px)}}
+@keyframes noteReveal{0%{opacity:0;transform:translateY(70px) scale(.45) rotate(-8deg)}75%{opacity:1;transform:translateY(-12px) scale(1.04) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
+@media(prefers-reduced-motion:reduce){.letter-scene.fly .envelope,.letter-scene.burst .envelope,.letter-scene.reveal .letter-note{animation-duration:.01ms}}footer{margin-top:34px;color:#c8b6db;font-size:.82rem}.confetti{position:fixed;top:-20px;z-index:5;pointer-events:none;animation:fall linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.1}}.hint{font-size:.82rem;color:#cbb9dc;margin-top:18px}
+.side-stars{position:fixed;inset:0;z-index:3;pointer-events:none}.star-link{position:absolute;display:grid;place-items:center;text-decoration:none;color:#ffe7ff;line-height:1;font-weight:900;-webkit-text-stroke:2px currentColor;paint-order:stroke fill;pointer-events:auto;filter:drop-shadow(0 0 10px #d7a5ffcc) drop-shadow(0 0 3px #fff);transition:transform .22s ease,filter .22s ease,color .22s ease;animation:starFloat 3.5s ease-in-out infinite alternate}.star-link:hover,.star-link:focus-visible{color:#ffd18b;filter:drop-shadow(0 0 18px #ff9ecb) drop-shadow(0 0 5px #fff);transform:scale(1.35) rotate(0deg)!important;outline:none}.star-link:focus-visible{outline:2px solid #fff;outline-offset:5px;border-radius:8px}@keyframes starFloat{to{translate:0 -9px}}@media(max-width:700px){main{padding:24px 12px}.card{width:calc(100% - 58px);padding:25px 14px}.star-link{opacity:.9}}
+
+/* Темний вступ зі свічками */
+body.intro-active{background:#030207;overflow:hidden}
+body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{visibility:hidden}
+.intro-scene{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 72%,#171020 0%,#050408 55%,#000 100%);transition:opacity 1.4s ease,visibility 1.4s ease}
+.intro-scene.done{opacity:0;visibility:hidden;pointer-events:none}
+.intro-content{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;padding:20px}
+.intro-title{font-size:clamp(1rem,3vw,1.25rem);color:#c8b9d7;letter-spacing:.08em}
+.intro-cake-wrap{position:relative;filter:drop-shadow(0 0 22px #ffb4dc22)}
+.intro-cake{font-size:clamp(125px,27vw,220px);line-height:1;user-select:none}
+.candle{position:absolute;top:4%;width:36px;height:70px;border:0;background:transparent;color:#ffe7a5;font-size:38px;cursor:pointer;filter:drop-shadow(0 0 7px #ffb24a55);padding:0;transition:filter .3s,transform .3s}
+.candle:hover{transform:scale(1.15)}
+.candle.c3{left:35%}.candle.c7{left:53%}
+.candle .flame{display:none;position:absolute;left:50%;top:-15px;transform:translateX(-50%);font-size:25px;animation:flameDance .45s ease-in-out infinite alternate;filter:drop-shadow(0 0 12px #ffb52e)}
+.candle.lit .flame{display:block}
+.candle.lit{color:#ffd77d}
+@keyframes flameDance{to{transform:translateX(-50%) rotate(8deg) scale(1.12)}}
+.lighter{border:1px solid #ffffff35;border-radius:18px;padding:12px 20px;background:#ffffff10;color:white;font-size:clamp(2rem,6vw,3rem);cursor:pointer;box-shadow:0 8px 30px #0008;transition:transform .2s,background .2s}
+.lighter:hover{transform:translateY(-3px);background:#ffffff20}
+.lighter.used{opacity:.4;filter:grayscale(1);cursor:default}
+.intro-hint{max-width:330px;min-height:24px;color:#b9a9c9;font-size:.92rem}
+@media(prefers-reduced-motion:reduce){.intro-scene{transition:none}.candle .flame{animation:none}}
+
+
+/* Фінальне оформлення темного вступу */
+.intro-scene{isolation:isolate;background:radial-gradient(ellipse at 50% 72%,#100b17 0%,#050408 48%,#000 100%);overflow:hidden}
+.intro-scene:before{content:"";position:absolute;z-index:-1;inset:-20%;pointer-events:none;background:radial-gradient(circle at 50% 48%,#ffb85a00 0 10%,#ff9c4b00 28%,transparent 48%);opacity:0;transition:opacity 1.5s ease,background 1.5s ease}
+.intro-scene.lighter-on:before{opacity:.7;background:radial-gradient(circle at 50% 49%,#ffbd5a35 0 5%,#ff9c4b18 18%,transparent 42%)}
+.intro-scene.both-lit:before{opacity:1;background:radial-gradient(ellipse at 50% 48%,#ffcf8b88 0%,#ffb45b4a 24%,#a75c5b22 52%,transparent 75%)}
+.intro-content{position:relative;z-index:1;width:min(100%,520px);gap:13px}
+.intro-title{font-size:clamp(.85rem,3vw,1.12rem);letter-spacing:.16em;text-transform:uppercase;color:#c9b8d9;text-shadow:0 2px 14px #000}
+.intro-cake-wrap{width:min(88vw,360px);height:245px;display:grid;place-items:end center;filter:drop-shadow(0 14px 20px #0009)}
+.cake-display{position:relative;width:100%;height:225px}
+.cake-plate{position:absolute;left:5%;right:5%;bottom:8px;height:25px;border-radius:50%;background:linear-gradient(#f6dce9,#a77b9d 55%,#493047);box-shadow:0 8px 18px #0009}
+.cake-bottom{position:absolute;left:13%;right:13%;bottom:25px;height:100px;border-radius:18px 18px 25px 25px;background:linear-gradient(90deg,#6c2c62,#b95788 20%,#f2a6c8 50%,#b95788 82%,#57234f);box-shadow:inset 0 8px 0 #ffd9e9,inset 0 -12px 0 #6b2b62,0 9px 14px #0007}
+.cake-bottom:before{content:"";position:absolute;left:0;right:0;top:18px;height:8px;background:#ffe1ed;opacity:.9}
+.cake-bottom:after{content:"";position:absolute;left:9%;right:9%;bottom:19px;height:7px;border-radius:50%;background:#ffd4e5;opacity:.8}
+.cake-top{position:absolute;left:17%;right:17%;bottom:115px;height:48px;border-radius:50%;background:radial-gradient(ellipse at 50% 28%,#ffe9f3 0%,#ffc2dc 54%,#d77da9 100%);border:3px solid #f8c4dd;box-shadow:0 4px 0 #8c3f73}
+.candle{position:absolute;z-index:4;top:28px;width:35px;height:88px;border:0;border-radius:7px 7px 4px 4px;background:repeating-linear-gradient(135deg,#fff1bd 0 8px,#e6a2c4 8px 15px);color:#63345b;font-size:23px;font-weight:900;cursor:pointer;padding:23px 0 0;box-shadow:inset -5px 0 7px #8e4a7444,0 4px 9px #0007;transition:filter .25s,transform .25s}
+.candle:after{content:"";position:absolute;left:0;right:0;top:-3px;height:8px;border-radius:50%;background:#fff0c9}
+.candle.c3{left:36%}.candle.c7{left:54%}
+.candle:hover{transform:translateY(-4px);filter:brightness(1.25)}
+.candle .wick{position:absolute;left:50%;top:-9px;width:3px;height:10px;background:#30202a;transform:translateX(-50%)}
+.candle .flame{display:none;position:absolute;left:50%;top:-43px;transform:translateX(-50%);width:22px;height:34px;border-radius:55% 45% 55% 45%;font-size:0;background:radial-gradient(ellipse at 50% 68%,#fffbd0 0 17%,#ffe16b 34%,#ff9b31 67%,#ff5a24 100%);box-shadow:0 0 10px 5px #ffb13b99,0 0 30px 12px #ff8d3266;animation:realFlame .16s ease-in-out infinite alternate;transform-origin:50% 100%}
+.candle .flame:after{content:"";position:absolute;left:7px;top:8px;width:8px;height:18px;border-radius:50%;background:#fff7cb;filter:blur(1px)}
+.candle.lit .flame{display:block}
+.candle.lit{box-shadow:0 0 18px #ffb84d55,inset -5px 0 7px #8e4a7444}
+@keyframes realFlame{from{transform:translateX(-50%) rotate(-5deg) scale(.94);filter:brightness(.95)}to{transform:translateX(-50%) rotate(6deg) scale(1.08);filter:brightness(1.2)}}
+.lighter{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;min-width:150px;border:1px solid #ffffff40;border-radius:13px;padding:12px 18px;background:linear-gradient(145deg,#51515b,#17171e 55%,#08080c);color:#f8e6f2;font-size:1rem;cursor:pointer;box-shadow:0 8px 24px #000b,inset 0 1px 1px #ffffff55;transition:transform .2s,box-shadow .3s}
+.lighter:hover{transform:translateY(-3px);box-shadow:0 10px 30px #000b,0 0 18px #ffb34b44}
+.lighter-body{font-size:1.55rem;line-height:1;color:#d8d8e1;text-shadow:0 1px 2px #000}
+.lighter-spark{position:absolute;left:50%;top:-24px;color:#ffbd4e;font-size:0;opacity:0;transition:opacity .2s}
+.lighter.used .lighter-spark{font-size:27px;opacity:1;animation:sparkPulse .4s ease-in-out infinite alternate}
+.lighter.used{opacity:1;border-color:#ffbd6b99;box-shadow:0 0 22px #ffb84b44,inset 0 1px 1px #ffffff55}
+.lighter-label{font-size:.68rem;letter-spacing:.13em;font-weight:800}
+.intro-hint{max-width:340px;min-height:26px;color:#c8b8d5;text-shadow:0 1px 8px #000;font-size:.9rem}
+.intro-scene.both-lit .intro-title{color:#ffe5b8;text-shadow:0 0 18px #ffb45b99}
+.intro-scene.both-lit .intro-hint{color:#ffe5c7}
+@keyframes sparkPulse{to{transform:translateY(-5px) scale(1.15);filter:drop-shadow(0 0 9px #ffbd4e)}}
+@media(max-width:420px){.intro-content{gap:10px;padding:14px}.intro-cake-wrap{height:215px;width:min(90vw,320px)}.cake-display{transform:scale(.88);transform-origin:bottom center}.candle{top:33px}.intro-title{letter-spacing:.1em}.lighter{padding:10px 16px}}
+@media(prefers-reduced-motion:reduce){.candle .flame,.lighter.used .lighter-spark{animation:none}.intro-scene:before{transition:none}}
+
+
+/* Корекція: одна тарілка під тортом, верх — кремова глазур */
+.cake-top{left:16%;right:16%;bottom:112px;height:31px;border:0;border-radius:50% 50% 12px 12px;background:linear-gradient(180deg,#fff0f5 0%,#ffd8e8 65%,#efa9ca 100%);box-shadow:inset 0 -5px 0 #eaa0c2}
+.cake-top:after{content:"";position:absolute;left:8%;right:8%;bottom:-9px;height:17px;background:radial-gradient(ellipse at 50% 0%,#ffe8f1 0 65%,transparent 70%);border-radius:0 0 50% 50%}
+.cake-plate{z-index:0}
+.cake-bottom{z-index:1}
+.cake-top{z-index:2}
+/* Більш впізнавана металева кишенькова запальничка */
+.lighter{width:94px;height:118px;min-width:0;padding:0;display:block;border:1px solid #9da0ad;border-radius:13px 13px 17px 17px;background:linear-gradient(100deg,#343741 0%,#b7bac4 13%,#555966 26%,#171a22 54%,#8c909b 82%,#292c35 100%);box-shadow:0 12px 28px #000c,inset 0 2px 3px #ffffff8a,inset 0 -5px 9px #0009;transform:perspective(300px) rotateX(3deg)}
+.lighter:hover{transform:perspective(300px) rotateX(3deg) translateY(-3px);box-shadow:0 15px 32px #000c,0 0 18px #ffb34b44,inset 0 2px 3px #ffffff8a}
+.lighter-cap{position:absolute;left:9px;right:9px;top:-13px;height:27px;border:1px solid #c2c4cc;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,#d8d9df,#6d707b 48%,#292c35);box-shadow:inset 0 2px 3px #fff9,0 3px 4px #0009;transform-origin:8px 100%;transition:transform .25s}
+.lighter-hinge{position:absolute;right:6px;top:9px;width:13px;height:7px;border-radius:3px;background:linear-gradient(#e4e5e9,#656a75);box-shadow:0 1px 2px #000}
+.lighter-striker{position:absolute;top:8px;left:50%;width:22px;height:13px;transform:translateX(-50%);border:2px solid #d5d6dc;border-radius:4px 4px 2px 2px;background:repeating-linear-gradient(90deg,#343741 0 2px,#c6c8d0 2px 3px);box-shadow:0 0 3px #000}
+.lighter-case{position:absolute;left:8px;right:8px;top:28px;bottom:9px;border-radius:7px 7px 11px 11px;background:linear-gradient(100deg,#171a22,#626673 20%,#22252e 47%,#777b86 80%,#242731);box-shadow:inset 0 1px 3px #fff7,inset 0 -4px 7px #0009}
+.lighter-emblem{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-family:Georgia,serif;font-size:26px;font-weight:bold;color:#d9dbe2;text-shadow:0 1px 2px #000,0 -1px 1px #fff}
+.lighter-label{position:absolute;left:0;right:0;bottom:15px;font-size:8px;letter-spacing:.09em;color:#f4e8c8;text-shadow:0 1px 2px #000}
+.lighter-spark{z-index:5;top:-35px}
+.lighter.used .lighter-cap{transform:rotate(-68deg) translate(-5px,-2px)}
+.lighter.used .lighter-spark{top:-45px}
+@media(max-width:420px){.lighter{width:84px;height:108px}.lighter-case{left:7px;right:7px}}
+
+
+/* Кекс 🧁 замість багатоярусного торта; свічки збережені, але зменшені */
+.intro-cake-wrap{width:min(86vw,280px);height:190px;display:grid;place-items:center;filter:drop-shadow(0 12px 20px #0009)}
+.cake-display{position:relative;width:260px;height:180px;display:grid;place-items:center}
+.intro-cake{font-size:clamp(128px,35vw,168px);line-height:1;filter:drop-shadow(0 7px 10px #0005);user-select:none}
+.candle{top:17px;width:24px;height:57px;border-radius:5px 5px 3px 3px;font-size:15px;padding:15px 0 0;background:repeating-linear-gradient(135deg,#fff1bd 0 6px,#e6a2c4 6px 11px);box-shadow:inset -3px 0 5px #8e4a7444,0 3px 6px #0007}
+.candle:after{top:-2px;height:6px}
+.candle.c3{left:40%}
+.candle.c7{left:52%}
+.candle .wick{top:-7px;height:8px;width:2px}
+.candle .flame{top:-32px;width:16px;height:25px;box-shadow:0 0 7px 3px #ffb13b99,0 0 18px 7px #ff8d3266}
+.candle .flame:after{left:5px;top:6px;width:6px;height:13px}
+@media(max-width:420px){.intro-cake-wrap{height:170px;width:min(90vw,260px)}.cake-display{transform:scale(.92);transform-origin:center}.intro-cake{font-size:145px}.candle{top:15px}}
+
+ 
+/* 3D birthday adventure */
+#gameRoot{position:fixed;inset:0;z-index:60;background:#080711;display:block;color:#fff;font-family:system-ui,sans-serif}
+#gameCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#gameHud{position:absolute;inset:0;pointer-events:none}
+#gameTask{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:min(90%,520px);padding:12px 18px;border:1px solid #ffffff30;border-radius:16px;background:#100d20c9;text-align:center;backdrop-filter:blur(10px);font-weight:700;box-shadow:0 8px 30px #0006}
+#gameHint{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(88%,420px);text-align:center;color:#fff;background:#100d20c9;border:1px solid #ffffff35;border-radius:14px;padding:10px 14px;font-size:.9rem}
+#aimDot{position:absolute;left:50%;top:50%;width:8px;height:8px;border:1.5px solid white;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 5px #000,0 0 10px #fff8}
+#handButton{position:absolute;right:24px;bottom:calc(34px + env(safe-area-inset-bottom));width:76px;height:76px;border-radius:50%;border:1px solid #ffffff75;background:#241936dd;color:#fff;font-size:30px;pointer-events:auto;box-shadow:0 5px 24px #0009;touch-action:none}
+#handButton small{display:block;font-size:10px;font-weight:800;letter-spacing:.08em}
+#movePad{position:absolute;left:24px;bottom:calc(28px + env(safe-area-inset-bottom));width:124px;height:124px;border-radius:50%;border:1px solid #ffffff40;background:#ffffff13;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;z-index:5}#moveNub{pointer-events:none;touch-action:none;will-change:transform}
+#moveNub{position:absolute;width:52px;height:52px;left:35px;top:35px;border-radius:50%;background:#ffffff55;border:1px solid #ffffff88;box-shadow:0 3px 12px #0006}
+#lookHelp{position:absolute;right:18px;top:75px;color:#ffffffa8;font-size:11px;text-align:right}
+#heldItem{position:absolute;right:24px;bottom:125px;font-size:42px;filter:drop-shadow(0 3px 8px #000);pointer-events:none}
+#gameStart{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(#080711cc,#080711eF);z-index:3;padding:24px;text-align:center}
+#gameStartCard{max-width:440px;padding:28px;border:1px solid #ffffff30;border-radius:24px;background:#211832ed;box-shadow:0 20px 80px #000b}
+#gameStart h2{font-size:clamp(1.6rem,6vw,2.4rem);margin:0 0 12px;color:#ffd9aa}
+#gameStart p{line-height:1.6;color:#e8dff1}
+#startGame{border:0;border-radius:999px;padding:14px 25px;font-weight:800;font-size:1rem;background:linear-gradient(100deg,#ffb56b,#ff79b7);color:#32152e}
+#gameRoot:not(.playing) #gameCanvas{visibility:hidden}
+#gameRoot:not(.playing) #gameHud>*:not(#gameStart){visibility:hidden}
+#gameRoot.playing #gameCanvas{visibility:visible}
+#gameRoot.playing #gameHud>*:not(#gameStart){visibility:visible}
+#gameRoot.hidden{display:none}
+@media(min-width:800px){#movePad{width:110px;height:110px}#moveNub{left:30px;top:30px}#lookHelp:after{content:"WASD — рух • миша — огляд • E — дія";font-size:12px}}
+@media(max-width:500px){#gameTask{top:10px;font-size:13px;padding:10px 12px}#gameHint{bottom:calc(18px + env(safe-area-inset-bottom));font-size:12px}#handButton{right:18px;width:68px;height:68px}#movePad{left:16px;width:112px;height:112px}#moveNub{left:30px;top:30px}}
+
+
+</style>
+</head>
+<body class="intro-active">
+<div id="gameRoot">
+<canvas id="gameCanvas"></canvas>
+<div id="gameHud">
+ <div id="gameTask">🎂 Знайди торт у холодильнику</div>
+ <div id="aimDot"></div><div id="lookHelp">Проведи пальцем праворуч, щоб оглянутися</div>
+ <div id="heldItem"></div>
+ <div id="gameHint">Підійди до холодильника та наведи точку на дверцята.</div>
+ <div id="movePad"><div id="moveNub"></div></div>
+ <button id="handButton" aria-label="Взяти або використати">✋<small>ДІЯ</small></button>
+</div>
+<div id="gameStart"><div id="gameStartCard"><h2>Час починати свято! 🎂</h2><p>Попереду маленька пригода. Підготуй торт, завар чай, запали свічки — і відкрий святкову сторінку.</p><p><b>Режим занурення:</b> гра розгорнеться на весь екран. На телефоні грай у горизонтальному або вертикальному положенні, як зручно.</p><p><b>Керування:</b> джойстик — рух, свайп — огляд, кнопка руки — взаємодія.</p><button id="startGame" type="button" onclick="window.startBirthdayGame()">🎉 Почати свято</button></div></div>
+
+<script>
+window.startBirthdayGame=function(){window.dispatchEvent(new Event('birthday-game-start'))};
+</script>
+<script type="module">
+
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
+window.__birthdayGameReady=function(){};
+let birthdayGameBoot=null;
+window.__birthdayStartGame=()=>{
+ if(birthdayGameBoot)return birthdayGameBoot;
+ birthdayGameBoot=bootBirthdayGame();
+ return birthdayGameBoot;
+};
+window.addEventListener('birthday-game-start',()=>window.__birthdayStartGame?.());
+async function bootBirthdayGame(){
+ const root=document.getElementById('gameRoot'),canvas=document.getElementById('gameCanvas');
+ const taskEl=document.getElementById('gameTask'),hintEl=document.getElementById('gameHint'),heldEl=document.getElementById('heldItem');
+ const hand=document.getElementById('handButton'),start=document.getElementById('startGame'),startScreen=document.getElementById('gameStart');
+ try{
+  start.disabled=true;
+  start.textContent='Завантажуємо гру…';
+  if(!document.fullscreenElement&&root.requestFullscreen)await root.requestFullscreen({navigationUI:'hide'}).catch(()=>{});
+  root.classList.add('playing');
+  startScreen.style.display='none';
+  hintEl.textContent='Створюємо кухню…';
+  let gameStarted=false;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x100d1c);scene.fog=new THREE.Fog(0x100d1c,9,22);
+const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,80);camera.position.set(0,1.65,5);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+scene.add(new THREE.HemisphereLight(0xbacbff,0x453047,1.1));
+const lamp=new THREE.PointLight(0xffc98b,0,12);lamp.position.set(0,3.1,0);scene.add(lamp);
+const warm=new THREE.PointLight(0xffb85c,0,5);warm.position.set(0,1.5,-2.5);scene.add(warm);
+const mat=(c,r=.8,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
+const wood=mat(0x70472f),wood2=mat(0x9b6948),wall=mat(0x51465e),cream=mat(0xe6d7c8),metal=mat(0x9ca5b2,.3,.75),dark=mat(0x242631),white=mat(0xe9e9ee),pink=mat(0xd779a8),gold=mat(0xe6b65d,.35,.55),glass= new THREE.MeshStandardMaterial({color:0xa9d9ed,transparent:true,opacity:.35,roughness:.15});
+function box(name,x,y,z,sx,sy,sz,material,group=scene){const o=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),material);o.name=name;o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o}
+function sphere(name,x,y,z,r,material,group=scene){const o=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),material);o.name=name;o.position.set(x,y,z);o.castShadow=true;group.add(o);return o}
+function cyl(name,x,y,z,rt,rb,h,material,group=scene){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,20),material);o.name=name;o.position.set(x,y,z);o.castShadow=true;group.add(o);return o}
+const floor=box('floor',0,-.12,0,12,.2,12,mat(0x392b3e));floor.receiveShadow=true;
+box('back wall',0,2,-6,12,4,.2,wall);box('left wall',-6,2,0,.2,4,12,wall);box('right wall',6,2,0,.2,4,12,wall);
+for(let i=0;i<6;i++)box('floor plank',0,.001,-5+i*2,11.8,.012,.025,wood2);
+const ceiling=box('ceiling',0,4,0,12,.12,12,mat(0x211c2b));
+const rug=box('rug',0,.015,-1.8,4,.025,2.8,mat(0x76506e));rug.rotation.y=.05;
+// Window and curtains
+box('window frame',-3.2,2.45,-5.86,2.1,1.55,.12,wood2);box('window glass',-3.2,2.45,-5.78,1.85,1.3,.04,glass);
+box('curtain left',-4.35,2.5,-5.65,.35,1.8,.18,pink);box('curtain right',-2.05,2.5,-5.65,.35,1.8,.18,pink);
+// Refrigerator at rear-left
+const fridge= new THREE.Group();fridge.position.set(-5.28,0,-3.55);fridge.rotation.y=Math.PI/2;scene.add(fridge);
+// Порожнистий корпус: задня стінка, боковини, дах і дно — без суцільного блока всередині.
+box('fridge left wall',-.57,1.25,0,.11,2.5,1.1,white,fridge);
+box('fridge right wall',.57,1.25,0,.11,2.5,1.1,white,fridge);
+box('fridge back wall',0,1.25,-.5,1.25,2.5,.1,white,fridge);
+box('fridge top',0,2.46,0,1.25,.08,1.1,white,fridge);
+box('fridge bottom',0,.05,0,1.25,.1,1.1,white,fridge);
+const fridgeDoor=new THREE.Group();fridgeDoor.position.set(-.625,1.25,.56);fridge.add(fridgeDoor);
+box('fridge door',.625,0,0,1.25,2.5,.13,mat(0xdde5ed),fridgeDoor);
+box('fridge handle',1.08,.05,.1,.055,.65,.08,metal,fridgeDoor);
+// Внутрішні полиці коротші за глибину корпусу, тому дверцята їх не зачіпають.
+box('fridge inner shelf upper',0,1.55,-.02,1.02,.055,.78,white,fridge);
+box('fridge inner shelf lower',0,.82,-.02,1.02,.055,.78,white,fridge);
+const fridgeGlow=new THREE.PointLight(0x9de8ff,0,3);fridgeGlow.position.set(0,1.35,.18);fridge.add(fridgeGlow);
+const cake=new THREE.Group();cake.position.set(-4.92,.88,-3.55);scene.add(cake);
+cyl('cake base',0,.08,0,.38,.4,.16,mat(0xf3c8dc),cake);cyl('cake sponge',0,.27,0,.34,.34,.25,mat(0x9a4d70),cake);cyl('cake icing',0,.42,0,.35,.35,.08,mat(0xffddeb),cake);
+for(let i=0;i<5;i++){const berry=sphere('berry',Math.cos(i*1.25)*.2,.49,Math.sin(i*1.25)*.2,.055,mat(0xc93665),cake)}
+cake.visible=false;
+// Table center
+const table=new THREE.Group();table.position.set(0,0,-1.6);scene.add(table);
+box('table top',0,.95,0,2.5,.16,1.5,wood2,table);
+for(const x of [-1,1])for(const z of [-.52,.52])box('table leg',x,.45,z,.14,.9,.14,wood,table);
+const mug=new THREE.Group();mug.position.set(4.8,1.98,-1.9);scene.add(mug);
+cyl('mug cup',0,.18,0,.16,.19,.36,white,mug);
+const handleRing=new THREE.Mesh(new THREE.TorusGeometry(.12,.035,8,20),white);handleRing.position.set(.16,.2,0);mug.add(handleRing);
+const tea=new THREE.Group();tea.position.set(5.18,.82,-2.5);scene.add(tea);
+box('tea sachet',0,0,0,.13,.18,.025,mat(0xe9d7a9),tea);box('tea label',0,.03,.02,.07,.05,.01,mat(0x9a425c),tea);tea.visible=false;
+const kettle=new THREE.Group();kettle.position.set(4.82,1.98,-2.65);scene.add(kettle);
+cyl('kettle body',0,.55,0,.38,.4,.65,metal,kettle);cyl('kettle lid',0,.9,0,.28,.28,.08,dark,kettle);sphere('kettle knob',0,.99,0,.08,dark,kettle);
+const spout=cyl('kettle spout',.38,.73,-.02,.08,.12,.4,metal,kettle);spout.rotation.z=-.9;
+const kettleHandle=new THREE.Mesh(new THREE.TorusGeometry(.27,.045,8,20,Math.PI),dark);kettleHandle.position.set(-.28,.75,0);kettle.add(kettleHandle);
+const steamGroup=new THREE.Group();scene.add(steamGroup);steamGroup.position.set(4.82,2.98,-2.65);
+for(let i=0;i<7;i++){const s=sphere('steam',Math.sin(i)*.12,i*.16,Math.cos(i)*.1,.045,mat(0xffffff));s.material.transparent=true;s.material.opacity=.0;steamGroup.add(s)}
+// Cabinet and sink
+const cabinet=new THREE.Group();cabinet.position.set(5.05,0,-2.5);cabinet.rotation.y=-Math.PI/2;scene.add(cabinet);
+// Нижня тумба з вільною передньою частиною та порожнім внутрішнім об'ємом.
+box('cabinet left side',-.75,.9,0,.1,1.8,.8,wood,cabinet);
+box('cabinet right side',.75,.9,0,.1,1.8,.8,wood,cabinet);
+box('cabinet back panel',0,.9,-.35,1.5,1.8,.1,wood,cabinet);
+box('cabinet bottom panel',0,.08,0,1.5,.12,.8,wood,cabinet);
+box('cabinet inner shelf',0,.72,-.02,1.42,.07,.68,wood2,cabinet);
+const cabDoor=new THREE.Group();cabDoor.position.set(-.8,1.1,.43);cabinet.add(cabDoor);
+box('cabinet door',.8,0,0,1.6,1.25,.07,wood2,cabDoor);
+box('cabinet knob',1.48,0,.06,.06,.1,.08,gold,cabDoor);
+// Стільниця розділена навколо вирізу раковини, а не перекриває її суцільною плитою.
+box('counter left section',-.69,1.9,0,.52,.16,1.05,cream,cabinet);
+box('counter right section',.69,1.9,0,.52,.16,1.05,cream,cabinet);
+box('counter front section',0,1.9,.43,.86,.16,.19,cream,cabinet);
+box('counter back section',0,1.9,-.43,.86,.16,.19,cream,cabinet);
+// Глибока раковина, темне дно та металевий кант.
+box('sink basin outer',0,1.82,0,.84,.12,.66,metal,cabinet);
+box('sink basin inner',0,1.79,0,.68,.055,.5,dark,cabinet);
+box('sink drain',0,1.758,0,.11,.012,.11,steel,cabinet);
+const tap=cyl('tap',0,2.14,-.43,.045,.045,.38,metal,cabinet);
+box('tap spout',0,2.32,-.23,.075,.07,.4,metal,cabinet);
+const tapHead=box('tap control',.18,2.13,-.43,.08,.16,.08,metal,cabinet);
+const tapWater=cyl('water stream',0,2.02,-.02,.025,.025,.28,mat(0x63cfff),cabinet);tapWater.material.transparent=true;tapWater.material.opacity=0;
+const chair=new THREE.Group();chair.position.set(0,0,-.05);scene.add(chair);
+box('chair seat',0,.55,0,.85,.13,.8,wood2,chair);for(const x of [-.34,.34])for(const z of [-.3,.3])box('chair leg',x,.27,z,.09,.55,.09,wood,chair);box('chair back',0,1.1,-.34,.85,1,.12,wood2,chair);
+// decorative wall lamp
+cyl('lamp shade',0,3.45,-5.65,.25,.35,.3,gold);sphere('lamp bulb',0,3.2,-5.65,.12,mat(0xffe6a5));
+const lighterObj=new THREE.Group();lighterObj.position.set(-.55,1.08,-1.6);scene.add(lighterObj);box('lighter case',0,.13,0,.16,.28,.08,metal,lighterObj);box('lighter cap',0,.3,0,.18,.08,.1,dark,lighterObj);sphere('lighter spark',0,.4,0,.06,mat(0xffae3c),lighterObj);lighterObj.visible=true;
+const candleA=cyl('candle one',-.2,1.42,-1.6,.035,.035,.3,mat(0xf5c7dc),table),candleB=cyl('candle two',.2,1.42,-1.6,.035,.035,.3,mat(0xf5c7dc),table);
+candleA.visible=false;candleB.visible=false;
+const flames=[];
+for(const c of [candleA,candleB]){const fl=sphere('flame',c.position.x,1.62,c.position.z,.07,mat(0xffb53d));fl.visible=false;flames.push(fl)}
+// Повноцінніше облаштування кухні: шафи, плита, витяжка, декор і зони зберігання
+const cabinetCream=mat(0xb9a6a0),tile=mat(0x81778c),steel=mat(0x737d89,.28,.8),blackGlass=mat(0x171923,.18,.35),woodLight=mat(0xb98259);
+function addWallCabinet(x,y,z,w=1.25){
+ const g=new THREE.Group();g.position.set(x,y,z);scene.add(g);
+ box('upper cabinet',0,0,0,w,.92,.48,cabinetCream,g);
+ box('upper cabinet door',0,0,.25,w*.94,.82,.035,cream,g);
+ box('upper cabinet handle',w*.32,0,.29,.035,.25,.035,gold,g);
+ box('cabinet underside',0,-.48,0,w,.05,.5,wood2,g);
+ return g;
+}
+function addDrawerUnit(x,z,w=1.1){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ box('kitchen base cabinet',0,.48,0,w,.96,.78,cabinetCream,g);
+ for(let i=0;i<3;i++){
+  const y=.78-i*.29;
+  box('drawer front',0,y,.405,w*.92,.25,.035,cream,g);
+  box('drawer pull',0,y,.44,.22,.035,.035,steel,g);
+ }
+ box('cabinet toe kick',0,.08,.35,w*.94,.13,.12,wood,g);
+ return g;
+}
+// Фартух із плитки на стіні за робочою поверхнею
+// Декоративна плита з духовкою та витяжкою — окрема зона на задній стіні.
+for(let x=-.15;x<=2.35;x+=.42)for(let y=2.35;y<=3.15;y+=.34)box('stove backsplash tile',x,y,-5.82,.39,.31,.035,tile);
+addWallCabinet(-.35,3.25,-5.55,1.05);
+addWallCabinet(2.0,3.25,-5.55,1.05);
+addDrawerUnit(4.85,-4.45,.8);
+box('stove glass surface',1.0,2.01,-5.25,1.05,.045,.72,blackGlass);
+for(const [x,z] of [[.67,-5.48],[1.32,-5.48],[.67,-5.02],[1.32,-5.02]]){
+ cyl('burner ring',x,2.045,z,.15,.15,.025,steel);
+ cyl('burner center',x,2.065,z,.07,.07,.018,dark);
+}
+box('oven body',1.0,1.12,-4.78,.95,1.55,.12,dark);
+box('oven glass door',1.0,1.1,-4.705,.76,.82,.025,blackGlass);
+box('oven handle',1.0,1.55,-4.65,.62,.045,.06,steel);
+for(let i=0;i<3;i++)cyl('oven control',.7+i*.3,1.88,-4.68,.055,.055,.045,metal);
+box('extractor chimney',1.0,3.48,-5.65,.42,.65,.35,steel);
+box('extractor hood',1.0,3.12,-5.42,1.35,.18,.7,steel);
+for(let i=0;i<4;i++)box('hood vent',.57+i*.28,3.015,-5.2,.12,.018,.28,dark);
+// Полички зі спеціями
+box('spice shelf',3.85,2.65,-5.72,2.2,.09,.32,wood2);
+for(let i=0;i<5;i++){
+ const jar=cyl('spice jar',3.05+i*.38,2.88,-5.62,.075,.075,.34,[pink,gold,cream,woodLight,steel][i]);
+ cyl('spice lid',3.05+i*.38,3.06,-5.62,.08,.08,.045,metal);
+}
+// Холодильник: магніти та верхня полиця
+box('fridge top trim',-5.28,2.56,-3.55,1.32,.09,1.13,metal);
+for(let i=0;i<3;i++){
+ const magnet=sphere('fridge magnet',0,1.8,.0,.07,[pink,gold,woodLight][i],fridge);
+ magnet.position.set(.59,1.8,-.35+i*.28);
+}
+// Стільниця-підвіконня, квітка та горщик
+box('window sill',-3.2,1.62,-5.65,2.35,.12,.42,wood2);
+cyl('flower pot',-3.2,1.82,-5.65,.16,.12,.28,pink);
+for(let i=0;i<5;i++)sphere('plant leaf',-3.2+Math.cos(i*1.25)*.16,2.12+Math.sin(i)*.05,-5.65+Math.sin(i*1.25)*.12,.12,mat(0x5e9b69));
+// Підвісні світильники над столом
+for(const x of [-1.2,1.2]){
+ cyl('pendant cord',x,3.55,-1.4,.018,.018,.7,dark);
+ const shade=cyl('pendant shade',x,3.18,-1.4,.2,.34,.22,gold);
+ sphere('pendant bulb',x,3.04,-1.4,.075,mat(0xffe5ae));
+}
+// Декор столу: серветка, тарілка та ваза
+box('table runner',0,1.04,-1.6,1.8,.018,.48,mat(0xead0df),table);
+cyl('serving plate',.82,1.055,-1.6,.22,.22,.025,white,table);
+const vase=cyl('flower vase',-.85,1.17,-1.6,.11,.15,.25,glass,table);
+for(let i=0;i<3;i++)sphere('table flowers',-.85+Math.cos(i*2.1)*.12,1.48,-1.6+Math.sin(i*2.1)*.1,.09,[pink,gold,mat(0xff9eb7)][i],table);
+// Додаткові стільці біля обіднього столу
+for(const [x,z,rot] of [[-1.72,-1.6,Math.PI/2],[1.72,-1.6,-Math.PI/2]]){
+ const cg=new THREE.Group();cg.position.set(x,0,z);cg.rotation.y=rot;scene.add(cg);
+ box('dining chair seat',0,.55,0,.72,.12,.7,wood2,cg);
+ for(const xx of [-.28,.28])for(const zz of [-.27,.27])box('dining chair leg',xx,.27,zz,.08,.54,.08,wood,cg);
+ box('dining chair back',0,1.02,-.3,.72,.86,.1,wood2,cg);
+}
+// Кошик, смітник і килимок біля мийки
+const bin=cyl('kitchen bin',5.35,.48,-4.35,.28,.34,.9,steel);
+cyl('bin lid',5.35,.96,-4.35,.3,.3,.08,dark);
+box('sink mat',4.05,.012,-2.5,1.1,.025,1.4,mat(0x51445d));
+// Додаткові настінні полиці з посудом
+box('dish shelf',-1.2,2.8,-5.72,1.65,.08,.35,wood2);
+for(let i=0;i<3;i++){
+ cyl('stacked bowl',-1.75+i*.52,2.98,-5.62,.13,.13,.12,cream);
+ cyl('bowl rim',-1.75+i*.52,3.045,-5.62,.13,.13,.025,gold);
+}
+// Декоративні плінтуси та стельовий карниз
+box('back wall baseboard',0,.12,-5.86,11.7,.18,.08,wood2);
+box('left wall baseboard',-5.86,.12,0,.08,.18,11.7,wood2);
+box('right wall baseboard',5.86,.12,0,.08,.18,11.7,wood2);
+
+// Small snow particles in fridge area
+const snow=[];
+for(let i=0;i<24;i++){const p=sphere('snow',-5.55+Math.random()*.7,.55+Math.random()*1.5,-4.0+Math.random()*.8,.018,mat(0xcdf5ff));p.visible=false;snow.push(p)}
+// object interaction anchors
+const targets=[];
+function target(name,obj,action){obj.userData.interact=name;obj.userData.action=action;targets.push(obj);return obj}
+target('Дверцята холодильника',fridgeDoor,()=>{if(!state.fridgeOpen){state.fridgeOpen=true;fridgeDoor.rotation.y=-1.65;fridgeGlow.intensity=2.5;cake.visible=true;snow.forEach(s=>s.visible=true);hint('Холодильник відкрито. Торт на внутрішній полиці.')}else if(!state.cakeTaken){hint('Спочатку дістань торт із полиці.')}else{state.fridgeOpen=false;fridgeDoor.rotation.y=0;fridgeGlow.intensity=0;snow.forEach(s=>s.visible=false);hint('Холодильник зачинено.')}});
+target('Торт',cake,()=>{if(!state.fridgeOpen){hint('Спочатку відкрий холодильник.');return}if(state.cakeTaken){hint('Торт уже в тебе.');return}state.cakeTaken=true;cake.visible=false;carry('🎂');hint('Торт у руках. Підійди до столу та постав його.');});
+target('Місце для торта',table.children[0],()=>{if(!state.cakeTaken){hint('Спочатку принеси торт.');return}state.cakePlaced=true;state.cakeTaken=false;carry('');const cakeOnTable=new THREE.Group();cakeOnTable.position.set(0,1.08,-1.6);scene.add(cakeOnTable);cyl('birthday cake base',0,.08,0,.48,.5,.16,mat(0xf3c8dc),cakeOnTable);cyl('birthday cake top',0,.2,0,.44,.44,.12,mat(0xffddeb),cakeOnTable);for(let i=0;i<2;i++){const cc=cyl('plain candle',-.12+i*.24,.36,0,.035,.035,.22,mat(0xf4c6dc),cakeOnTable);cc.userData.candleIndex=i;target('Свічка',cc,()=>lightCandle(i))}hint('Торт на столі! Тепер приготуй чай.');});
+target('Дверцята тумби',cabDoor,()=>{state.cabinetOpen=!state.cabinetOpen;cabDoor.rotation.y=state.cabinetOpen?-1.35:0;tea.visible=state.cabinetOpen&&!state.teaTaken;hint(state.cabinetOpen?'Тумба відкрита. Пакетик лежить усередині.':'Тумбу зачинено.')});
+target('Пакетик чаю',tea,()=>{if(!state.cabinetOpen){hint('Спочатку відкрий тумбу.');return}if(!state.teaTaken){state.teaTaken=true;tea.visible=false;carry('🍵');hint('Пакетик чаю взято. Поклади його в кружку.')}});
+target('Чайник',kettle,()=>{if(!state.kettleFilled&&!state.kettleTaken){state.kettleTaken=true;kettle.visible=false;carry('🫖');hint('Чайник у руках. Підійди до крана й натисни на нього, щоб набрати воду.');return}if(state.kettleTaken&&!state.kettleFilled){hint('Піднеси чайник до крана та набери воду.');return}if(!state.kettleClosed){state.kettleClosed=true;hint('Кришку чайника закрито. Натисни на чайник ще раз, щоб увімкнути кип’ятіння.');return}if(!state.boiled){state.boiled=true;hint('Чайник кипить...');setTimeout(()=>{state.boiledDone=true;hint('Вода закипіла! Тепер приготуй чай у кружці.');steamGroup.children.forEach(s=>s.material.opacity=.45)},2400);return}if(state.boiledDone){hint('Вода вже закипіла. Приготуй чай у кружці.')}});
+target('Кран',tapHead,()=>{if(!state.kettleTaken){hint('Спочатку візьми чайник зі стільниці.');return}if(!state.kettleFilled){state.kettleFilled=true;state.kettleTaken=false;kettle.visible=true;carry('');tapWater.material.opacity=.65;hint('Чайник наповнено водою. Постав його на стільницю та закрий кришку.')}else{state.tapOpen=!state.tapOpen;tapWater.material.opacity=state.tapOpen ? .65 : 0;hint(state.tapOpen?'Вода тече.':'Кран закрито.')}});
+target('Кришка чайника',kettle.children[1],()=>{state.kettleClosed=true;hint('Чайник закрито. Натисни на нього, щоб увімкнути кип’ятіння.')});
+target('Кружка',mug,()=>{if(!state.boiledDone){hint('Спочатку закип’яти воду.');return}if(!state.mugTaken){state.mugTaken=true;hint('Кружку взято. Натисни ще раз, щоб покласти пакетик чаю.');return}if(!state.teaInMug){if(!state.teaTaken){hint('Спочатку дістань пакетик чаю з тумби.');return}state.teaInMug=true;state.teaTaken=false;carry('');hint('Пакетик у кружці. Натисни ще раз, щоб залити окропом.');return}if(!state.poured){state.poured=true;state.teaDone=true;state.mugTaken=false;hint('Чай готовий! Тепер візьми запальничку біля столу.')}});
+target('Запальничка',lighterObj,()=>{if(!state.cakePlaced){hint('Спочатку постав торт на стіл.');return}if(!state.teaDone){hint('Спочатку приготуй чай.');return}state.lighterTaken=true;lighterObj.visible=false;carry('🔥');hint('Запальничка в руках. Запали дві свічки на торті.')});
+target('Стілець',chair.children[0],()=>{if(state.litCount<2){hint('Спочатку запали обидві свічки.');return}state.sat=true;camera.position.set(0,1.5,2.1);camera.rotation.set(0,Math.PI,0);hint('Ти сів за стіл. З днем народження!');setTimeout(finishGame,1400)});
+const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false};
+function lightCandle(i){if(!state.lighterTaken){hint('Спочатку візьми запальничку.');return}if(!state.cakePlaced){hint('Потрібен торт на столі.');return}const fl=flames[i];if(fl.visible)return;fl.visible=true;state.litCount++;lamp.intensity=state.litCount===1?1.2:2.8;warm.intensity=state.litCount===1?1.5:3.5;hint(state.litCount===1?'Перша свічка горить. Запали другу!':'Обидві свічки горять! Сідай на стілець.');if(state.litCount===2){scene.background=new THREE.Color(0x24172b);scene.fog.color.set(0x24172b)}}
+function finishGame(){if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});window.location.href='site.html';}
+function carry(v){heldEl.textContent=v}
+function hint(t){hintEl.textContent=t;taskEl.textContent=t}
+let yaw=0,pitch=0,moveX=0,moveY=0,lastX=0,lastY=0,lookTouch=false;
+const clock=new THREE.Clock();const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+function look(dx,dy){yaw-=dx*.004;pitch=Math.max(-1.15,Math.min(1.15,pitch-dy*.003));camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}
+canvas.addEventListener('click',()=>{if(innerWidth>760&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
+document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas)look(e.movementX,e.movementY)});
+let lookTouchId=null;
+canvas.addEventListener('touchstart',e=>{for(const t of e.changedTouches){if(t.clientX>innerWidth*.32&&lookTouchId===null){lookTouchId=t.identifier;lastX=t.clientX;lastY=t.clientY;lookTouch=true;break}}},{passive:true});
+canvas.addEventListener('touchmove',e=>{if(lookTouchId===null)return;const t=Array.from(e.touches).find(v=>v.identifier===lookTouchId);if(!t)return;const dx=t.clientX-lastX,dy=t.clientY-lastY;lastX=t.clientX;lastY=t.clientY;look(dx,dy);e.preventDefault()},{passive:false});
+function releaseLookTouch(e){if(lookTouchId===null)return;for(const t of e.changedTouches){if(t.identifier===lookTouchId){lookTouchId=null;lookTouch=false;break}}}
+canvas.addEventListener('touchend',releaseLookTouch,{passive:true});
+canvas.addEventListener('touchcancel',releaseLookTouch,{passive:true});
+const pad=document.getElementById('movePad'),nub=document.getElementById('moveNub');let padId=null;
+function movePad(e){
+ const r=pad.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+ let dx=e.clientX-cx,dy=e.clientY-cy;
+ const max=Math.min(r.width,r.height)*.36,len=Math.hypot(dx,dy);
+ if(len>max){dx=dx/len*max;dy=dy/len*max}
+ const dead=4,dist=Math.hypot(dx,dy);
+ if(dist<dead){moveX=0;moveY=0}else{moveX=dx/max;moveY=dy/max}
+ nub.style.transform='translate('+dx+'px,'+dy+'px)';
+}
+function resetPad(e){
+ if(e&&padId!==null&&e.pointerId!==padId)return;
+ const oldId=padId;padId=null;moveX=0;moveY=0;nub.style.transform='translate(0,0)';
+ if(oldId!==null&&pad.hasPointerCapture(oldId)){try{pad.releasePointerCapture(oldId)}catch(_){}}
+}
+pad.addEventListener('pointerdown',e=>{e.preventDefault();if(padId!==null)return;padId=e.pointerId;try{pad.setPointerCapture(e.pointerId)}catch(_){}movePad(e)});
+pad.addEventListener('pointermove',e=>{if(e.pointerId===padId){e.preventDefault();movePad(e)}});
+pad.addEventListener('pointerup',resetPad);pad.addEventListener('pointercancel',resetPad);pad.addEventListener('lostpointercapture',()=>{if(padId!==null)resetPad()});
+window.addEventListener('pointerup',e=>{if(e.pointerId===padId)resetPad(e)});
+window.addEventListener('blur',()=>resetPad());
+document.addEventListener('visibilitychange',()=>{if(document.hidden)resetPad()});
+hand.addEventListener('click',interact);
+const ray=new THREE.Raycaster();let currentTarget=null;
+function interact(){if(!currentTarget){hint('Наведи центральну точку на предмет ближче до себе.');return}currentTarget.userData.action?.()}
+function animate(){if(!gameStarted)return;requestAnimationFrame(animate);
+ const forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-moveY;
+ const strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
+ const dir=new THREE.Vector3(strafe,0,-forward);
+ const delta=Math.min(clock.getDelta(),.05);
+ if(dir.lengthSq()>0.0025){
+  dir.clampLength(0,1).applyAxisAngle(new THREE.Vector3(0,1,0),yaw);
+  camera.position.addScaledVector(dir,delta*3.4);
+ }
+ camera.position.x=Math.max(-5.2,Math.min(5.2,camera.position.x));camera.position.z=Math.max(-5.2,Math.min(5.2,camera.position.z));camera.position.y=1.65;
+ray.setFromCamera(new THREE.Vector2(0,0),camera);const hits=ray.intersectObjects(targets,true);currentTarget=null;for(const h of hits){let o=h.object;while(o&&!o.userData.action)o=o.parent;if(o&&o.userData.action&&h.distance<3.2){currentTarget=o;break}}
+hand.style.opacity=currentTarget?'1':'.65';
+if(currentTarget)hand.querySelector('small').textContent='ДІЯ';else hand.querySelector('small').textContent='ОБРАТИ';
+if(state.tapOpen){tapWater.rotation.z+=.02}
+snow.forEach((s,i)=>{if(s.visible){s.position.y+=Math.sin(Date.now()*.001+i)*.0008-.001;if(s.position.y<.45)s.position.y=1.9}});
+renderer.render(scene,camera)}
+function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))}
+addEventListener('resize',resize);
+
+
+  gameStarted=true;
+  animate();
+  hintEl.textContent='Підійди до холодильника. Наведи точку на дверцята й натисни ✋.';
+ }catch(err){
+  console.error('Помилка запуску Happy Birthday:',err);
+  root.classList.remove('playing');
+  startScreen.style.display='grid';
+  start.disabled=false;
+  start.textContent='Спробувати ще раз';
+  hintEl.textContent='Не вдалося створити гру: '+(err?.message||'невідома помилка')+'. Перевір інтернет і спробуй ще раз.';
+  birthdayGameBoot=null;
+ }
+}
+
+</script>
+</body>
+</html>
