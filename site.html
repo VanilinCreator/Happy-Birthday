@@ -153,6 +153,23 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
 @media(max-width:500px){#gameTask{top:10px;font-size:13px;padding:10px 12px}#gameHint{bottom:calc(18px + env(safe-area-inset-bottom));font-size:12px}#handButton{right:18px;width:68px;height:68px}#movePad{left:16px;width:112px;height:112px}#moveNub{left:30px;top:30px}}
 
 
+
+/* Святковий квест із подарунком */
+.gift-scene{position:fixed;inset:0;z-index:30;display:none;place-items:center;padding:18px;background:#100820d9;backdrop-filter:blur(9px)}
+.gift-scene.active{display:grid;animation:giftFade .35s ease}
+.gift-card{width:min(460px,100%);padding:clamp(25px,6vw,38px) 24px;text-align:center;border:1px solid #ffffff35;border-radius:26px;background:linear-gradient(145deg,#34204f,#1b1230);box-shadow:0 22px 80px #0009}
+.gift-icon{font-size:64px;line-height:1.2;filter:drop-shadow(0 5px 12px #ff9ecb55)}
+.gift-card h2{margin:12px 0;color:#ffd6a5;font-size:clamp(1.5rem,6vw,2rem)}
+.gift-card p{color:#f0e5fa;line-height:1.65;font-size:1.05rem;margin:10px 0 22px}
+.gift-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.gift-btn{border:0;border-radius:999px;padding:13px 23px;font-weight:800;font-size:1rem;cursor:pointer;background:linear-gradient(100deg,#ffb56b,#ff79b7);color:#32152e;box-shadow:0 7px 22px #ff79b733}
+.gift-btn.alt{background:#ffffff16;border:1px solid #ffffff35;color:#fff;box-shadow:none}
+.gift-input{display:block;width:min(260px,100%);margin:16px auto 8px;padding:14px 16px;border:1px solid #ffffff55;border-radius:13px;background:#100b20;color:white;text-align:center;font-size:1.35rem;letter-spacing:.22em;outline:none}
+.gift-input:focus{border-color:#ffb6d7;box-shadow:0 0 0 3px #ff9ecb25}
+.gift-error{min-height:24px;color:#ffb0bd;font-size:.9rem;margin:5px 0 12px}
+.gift-progress{color:#cbb9dc;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase}
+@keyframes giftFade{from{opacity:0}to{opacity:1}}
+
 </style>
 </head>
 <body>
@@ -180,6 +197,20 @@ body.intro-active .stars,body.intro-active main,body.intro-active .side-stars{vi
     <button class="letter-close" id="closeLetter">Дякую! 💜</button>
   </article>
 </div>
+
+<div class="gift-scene" id="giftScene" role="dialog" aria-modal="true" aria-labelledby="giftTitle">
+ <section class="gift-card">
+  <div class="gift-icon" id="giftIcon">🎁</div>
+  <div class="gift-progress" id="giftProgress">Особливий сюрприз</div>
+  <h2 id="giftTitle">Хочеш забрати подарунок?</h2>
+  <p id="giftText">На тебе чекає маленький квест. Готова вирушити на пошуки?</p>
+  <div id="giftControls" class="gift-actions">
+   <button class="gift-btn" id="giftYes">Так! 🎁</button>
+   <button class="gift-btn alt" id="giftNo">Не зараз</button>
+  </div>
+ </section>
+</div>
+
 <script>
 
 const birthdayLink='https://www.youtube.com/watch?v=RnIV0DnJ-jw';
@@ -220,8 +251,77 @@ function closeLetter(){
  if(!letterScene.classList.contains('active')) return;
  letterScene.classList.remove('reveal');
  letterScene.classList.add('closing');
- setTimeout(()=>{letterScene.className='letter-scene';},850);
+ setTimeout(()=>{letterScene.className='letter-scene';showGiftQuestion();},850);
 }
+
+/* Ланцюжок подарункових підказок і кодів */
+const giftScene=document.getElementById('giftScene');
+const giftIcon=document.getElementById('giftIcon');
+const giftProgress=document.getElementById('giftProgress');
+const giftTitle=document.getElementById('giftTitle');
+const giftText=document.getElementById('giftText');
+const giftControls=document.getElementById('giftControls');
+let giftStep=0;
+function showGiftQuestion(){
+ giftScene.classList.add('active');
+ giftStep=0;
+ giftIcon.textContent='🎁';
+ giftProgress.textContent='Особливий сюрприз';
+ giftTitle.textContent='Хочеш забрати подарунок?';
+ giftText.textContent='На тебе чекає маленький квест. Готова вирушити на пошуки?';
+ giftControls.innerHTML='<button class="gift-btn" id="giftYes">Так! 🎁</button><button class="gift-btn alt" id="giftNo">Не зараз</button>';
+ document.getElementById('giftYes').addEventListener('click',()=>showGiftClue(1));
+ document.getElementById('giftNo').addEventListener('click',()=>giftScene.classList.remove('active'));
+}
+const giftClues=[
+ {clue:'Смачний гранат!',code:'166025'},
+ {clue:'Під м’яким, що ти купила, щоб спати.',code:'790252'},
+ {clue:'Бджілка 🐝',code:null}
+];
+function showGiftClue(step){
+ giftStep=step;
+ const item=giftClues[step-1];
+ giftIcon.textContent=step===3?'🐝':'🔎';
+ giftProgress.textContent='Підказка '+step+' із 3';
+ giftTitle.textContent='Знайди сюрприз!';
+ giftText.textContent=item.clue;
+ giftControls.innerHTML='<button class="gift-btn" id="giftFound">Знайшов! 🔍</button>';
+ document.getElementById('giftFound').addEventListener('click',()=>item.code?showGiftCode(step):showGiftFinish());
+}
+function showGiftCode(step){
+ const item=giftClues[step-1];
+ giftIcon.textContent='🔐';
+ giftProgress.textContent='Підказка '+step+' із 3';
+ giftTitle.textContent='Введи код';
+ giftText.textContent='Знайшов? Введи код, щоб перейти до наступної підказки.';
+ giftControls.innerHTML='<form id="giftCodeForm"><input class="gift-input" id="giftCodeInput" type="text" inputmode="numeric" autocomplete="off" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" aria-label="Код із шести цифр" required><div class="gift-error" id="giftError" aria-live="polite"></div><button class="gift-btn" type="submit">Далі ➜</button></form>';
+ const form=document.getElementById('giftCodeForm');
+ const input=document.getElementById('giftCodeInput');
+ input.focus();
+ form.addEventListener('submit',event=>{
+  event.preventDefault();
+  if(input.value.trim()!==item.code){
+   document.getElementById('giftError').textContent='Код неправильний. Спробуй ще раз!';
+   input.select();
+   return;
+  }
+  if(step===1)showGiftClue(2);
+  else showGiftClue(3);
+ });
+}
+function showGiftFinish(){
+ giftProgress.textContent='Подарунок знайдено!';
+ giftIcon.textContent='🎉🐝🎉';
+ giftTitle.textContent='Вітаююююююю!';
+ giftText.textContent='Ти знайшла всі сюрпризи! Нехай цей подарунок принесе багато радості! 💜';
+ giftControls.innerHTML='<button class="gift-btn" id="giftFinish">Дякую! 💜</button>';
+ confetti(140);
+ document.getElementById('giftFinish').addEventListener('click',()=>{
+  giftScene.classList.remove('active');
+  giftScene.setAttribute('aria-hidden','true');
+ });
+}
+
 document.getElementById('wish').addEventListener('click',openLetter);
 document.getElementById('closeLetter').addEventListener('click',closeLetter);
 letterScene.addEventListener('click',e=>{if(e.target===letterScene)closeLetter();});
