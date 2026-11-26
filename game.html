@@ -381,7 +381,7 @@ for(const [x,z,rot] of [[-1.72,-1.6,Math.PI/2],[1.72,-1.6,-Math.PI/2]]){
 // Нова зона після святкового столу: ванна кімната та спальня.
 const bathTile=mat(0x9bb8c8),bedFabric=mat(0x79658d),bedWood=mat(0x684633);
 // Душова кабіна в лівій частині прибудови.
-box('shower tray',-4.15,.12,5.35,1.45,.22,1.55,white);
+const showerTray=box('shower tray',-4.15,.12,5.35,1.45,.22,1.55,white);
 box('shower back panel',-4.15,1.45,6.08,1.45,2.7,.08,bathTile);
 box('shower side panel',-4.88,1.45,5.35,.08,2.7,1.55,bathTile);
 box('shower glass panel',-3.43,1.45,5.35,.035,2.7,1.55,glass);
@@ -432,7 +432,7 @@ target('Кружка',mug,()=>{if(state.mugTaken){hint('Віднеси круж�
 const mugDrop=new THREE.Mesh(new THREE.BoxGeometry(.75,.12,.65),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));mugDrop.position.set(.82,1.08,-1.6);scene.add(mugDrop);target('Місце для кружки',mugDrop,()=>{if(!state.mugTaken){hint('Спочатку візьми кружку.');return}mug.position.set(.82,1.08,-1.6);mug.visible=true;state.mugTaken=false;state.mugPlaced=true;carry('');hint('Кружку поставлено на стіл!')});
 target('Запальничка',lighterObj,()=>{if(!state.cakePlaced){hint('Спочатку постав торт на стіл.');return}if(!state.teaDone){hint('Спочатку приготуй чай.');return}state.lighterTaken=true;lighterObj.visible=false;carry('🔥');hint('Запальничка в руках. Запали дві свічки на торті.')});
 for(const [index,seatGroup] of diningChairs.entries()){target('Стілець '+(index+1),seatGroup.children[0],()=>{if(state.litCount<2){hint('Спочатку запали обидві свічки.');return}if(!state.mugPlaced){hint('Спочатку постав кружку з чаєм на стіл.');return}state.ate=true;hint('Ти поїв! Тепер прямуй у ванну кімнату та прийми душ.');taskEl.textContent='🚿 Час прийняти душ';})}
-target('Душ',toilet.children[0],()=>{if(!state.ate){hint('Спочатку закінчи святкову вечерю.');return}if(state.showered){hint('Ти вже прийняв душ. Тепер скористайся туалетом.');return}state.showered=true;hint('Душ прийнято! Тепер підійди до туалету.');taskEl.textContent='🚽 Час у туалет';});
+target('Душ',showerTray,()=>{if(!state.ate){hint('Спочатку закінчи святкову вечерю.');return}if(state.showered){hint('Ти вже прийняв душ. Тепер скористайся туалетом.');return}state.showered=true;hint('Душ прийнято! Тепер підійди до туалету.');taskEl.textContent='🚽 Час у туалет';});
 target('Туалет',toilet.children[1],()=>{if(!state.showered){hint('Спочатку прийми душ.');return}if(state.usedToilet){hint('Це вже зроблено. Тепер іди спати.');return}state.usedToilet=true;hint('Готово! Тепер іди до ліжка у спальні.');taskEl.textContent='🛏️ Час спати';});
 target('Ліжко',bed.children[0],()=>{if(!state.usedToilet){hint('Спочатку сходи в душ, а потім у туалет.');return}state.slept=true;hint('Ти ліг спати. День завершено!');taskEl.textContent='🌙 На добраніч!';setTimeout(finishGame,1800)});
 const state={fridgeOpen:false,cakeTaken:false,cakePlaced:false,cabinetOpen:false,teaTaken:false,kettleTaken:false,kettleFilled:false,tapOpen:false,kettleClosed:false,boiled:false,boiledDone:false,poured:false,mugTaken:false,mugPlaced:false,teaInMug:false,teaDone:false,lighterTaken:false,litCount:0,sat:false,ate:false,showered:false,usedToilet:false,slept:false};
